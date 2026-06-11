@@ -1456,6 +1456,79 @@
     .tab { font-size: 0.68rem; padding: 8px 4px; }
   }
 
+  /* ── AVATARES PROFESIONALES (estilo Teams/Outlook) ── */
+  .avatar-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    line-height: 1;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  /* Tamaños */
+  .avatar-xl  { width: 56px; height: 56px; font-size: 1.35rem; }
+  .avatar-lg  { width: 40px; height: 40px; font-size: 1rem; }
+  .avatar-md  { width: 32px; height: 32px; font-size: 0.78rem; }
+  .avatar-sm  { width: 22px; height: 22px; font-size: 0.58rem; }
+
+  /* Colores diferenciados por jugador */
+  .avatar-p1  { background: linear-gradient(135deg, #1565C0, #1976D2); color: #fff; box-shadow: 0 2px 8px rgba(21,101,192,0.4); }
+  .avatar-p2  { background: linear-gradient(135deg, #6A1B9A, #8E24AA); color: #fff; box-shadow: 0 2px 8px rgba(106,27,154,0.4); }
+  .avatar-p3  { background: linear-gradient(135deg, #00695C, #00897B); color: #fff; box-shadow: 0 2px 8px rgba(0,105,92,0.4); }
+  .avatar-p4  { background: linear-gradient(135deg, #BF360C, #E64A19); color: #fff; box-shadow: 0 2px 8px rgba(191,54,12,0.4); }
+
+  /* En selector de jugador: tamaño grande */
+  .player-card .avatar-circle { width: 56px; height: 56px; font-size: 1.4rem; margin: 0 auto 12px; }
+
+  /* En leaderboard */
+  .lb-avatar .avatar-circle { width: 40px; height: 40px; font-size: 1rem; }
+
+  /* En compare panel */
+  .compare-avatar .avatar-circle { width: 26px; height: 26px; font-size: 0.65rem; }
+
+  /* En header (user actual) */
+  #current-user-avatar .avatar-circle,
+  .avatar-circle.header-avatar { width: 30px; height: 30px; font-size: 0.72rem; }
+
+  /* En config panel */
+  .config-avatar .avatar-circle { width: 36px; height: 36px; font-size: 0.88rem; }
+
+  /* ── BLOQUEO DE PRONÓSTICOS ── */
+  .match-locked {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .match-locked .score-area {
+    pointer-events: none;
+  }
+  .locked-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    padding: 3px 9px;
+    border-radius: 8px;
+    font-weight: 700;
+    background: rgba(229,57,53,0.15);
+    color: #ff6b6b;
+    border: 1px solid rgba(229,57,53,0.25);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .score-box:disabled {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.06);
+    color: var(--texto2);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   /* ── ACTUALIZAR RESULTADOS OFICIALES ── */
   .btn-update-official {
     padding: 10px 22px;
@@ -2077,6 +2150,8 @@ function subscribeToFirestore() {
       const ps = state.players[currentPlayer];
       if (document.getElementById('current-user-name'))
         document.getElementById('current-user-name').textContent = ps.name;
+      if (document.getElementById('current-user-avatar'))
+        document.getElementById('current-user-avatar').innerHTML = avatarHTML(currentPlayer, ps.name, 'md');
     }
   });
 
@@ -2099,6 +2174,70 @@ function getPlayers() {
 }
 
 // ═══════════════════════════════════════════
+//  AVATARES PROFESIONALES (iniciales)
+// ═══════════════════════════════════════════
+function getInitials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+// size: 'xl' | 'lg' | 'md' | 'sm'
+function avatarHTML(playerId, name, size = 'lg') {
+  const initials = getInitials(name);
+  return `<span class="avatar-circle avatar-${playerId} avatar-${size}" title="${name}">${initials}</span>`;
+}
+
+// ═══════════════════════════════════════════
+//  BLOQUEO AUTOMÁTICO DE PRONÓSTICOS
+// ═══════════════════════════════════════════
+// Mapa fecha+hora → Date en zona horaria Colombia (UTC-5)
+const FECHA_MAP = {
+  'Jue 11 Jun': { month: 6, day: 11 },
+  'Vie 12 Jun': { month: 6, day: 12 },
+  'Sáb 13 Jun': { month: 6, day: 13 },
+  'Dom 14 Jun': { month: 6, day: 14 },
+  'Lun 16 Jun': { month: 6, day: 16 },
+  'Mar 17 Jun': { month: 6, day: 17 },
+  'Mié 18 Jun': { month: 6, day: 18 },
+  'Jue 19 Jun': { month: 6, day: 19 },
+  'Vie 20 Jun': { month: 6, day: 20 },
+  'Sáb 21 Jun': { month: 6, day: 21 },
+  'Dom 22 Jun': { month: 6, day: 22 },
+  'Lun 23 Jun': { month: 6, day: 23 },
+  'Mar 24 Jun': { month: 6, day: 24 },
+  'Mié 25 Jun': { month: 6, day: 25 },
+  'Jue 26 Jun': { month: 6, day: 26 },
+  'Vie 27 Jun': { month: 6, day: 27 },
+  'Sáb 28 Jun': { month: 6, day: 28 },
+};
+
+function parseMatchDateTime(match) {
+  const fechaInfo = FECHA_MAP[match.fecha];
+  if (!fechaInfo || !match.hora) return null;
+  // Parsear hora: "2:00 p.m." / "9:00 a.m." / "11:00 p.m."
+  const horaStr = match.hora.trim().toLowerCase();
+  const m = horaStr.match(/(\d+):(\d+)\s*(a\.m\.|p\.m\.)/);
+  if (!m) return null;
+  let h = parseInt(m[1]);
+  const min = parseInt(m[2]);
+  const ampm = m[3];
+  if (ampm === 'p.m.' && h !== 12) h += 12;
+  if (ampm === 'a.m.' && h === 12) h = 0;
+  // Construir fecha en UTC a partir de Colombia (UTC-5)
+  // Colombia es UTC-5 → sumar 5 horas para obtener UTC
+  const utcDate = new Date(Date.UTC(2026, fechaInfo.month - 1, fechaInfo.day, h + 5, min, 0));
+  return utcDate;
+}
+
+function isMatchLocked(match) {
+  const kickoff = parseMatchDateTime(match);
+  if (!kickoff) return false;
+  return Date.now() >= kickoff.getTime();
+}
+
+// ═══════════════════════════════════════════
 //  PLAYER SELECT SCREEN
 // ═══════════════════════════════════════════
 function renderPlayerSelect() {
@@ -2108,7 +2247,7 @@ function renderPlayerSelect() {
     const preds = Object.keys(p.predictions).length;
     return `
     <div class="player-card" onclick="selectPlayer('${p.id}')">
-      <div class="player-avatar">${p.avatar}</div>
+      <div class="player-avatar">${avatarHTML(p.id, p.name, 'xl')}</div>
       <div class="player-name">${p.name}</div>
       <div class="player-stats">${preds}/48 predicciones</div>
       <div class="player-pts">${pts} pts</div>
@@ -2122,7 +2261,7 @@ function selectPlayer(id) {
   document.getElementById('app').style.display = 'block';
   document.getElementById('header-nav').style.display = 'flex';
   const ps = state.players[id];
-  document.getElementById('current-user-avatar').textContent = ps.avatar;
+  document.getElementById('current-user-avatar').innerHTML = avatarHTML(id, ps.name, 'md');
   document.getElementById('current-user-name').textContent = ps.name;
   renderAll();
 }
@@ -2195,10 +2334,18 @@ function renderMatches() {
     groups[g].forEach(m => {
       const pred = ps.predictions[String(m.id)];
       const result = state.results[m.id];
+      const locked = isMatchLocked(m);
       let cardClass = 'match-card';
       let badge = '';
 
-      if (pred !== undefined) {
+      if (locked) {
+        badge = '<span class="locked-badge">🔒 Pronóstico cerrado</span>';
+        if (pred !== undefined && result !== undefined) {
+          const pts = calcMatchPoints(pred, result);
+          if (pts === 3) { cardClass += ' correct'; }
+          else if (pts === 0) { cardClass += ' wrong'; }
+        }
+      } else if (pred !== undefined) {
         cardClass += ' has-prediction';
         if (result !== undefined) {
           const pts = calcMatchPoints(pred, result);
@@ -2215,8 +2362,11 @@ function renderMatches() {
       const predH = pred !== undefined ? pred.home : '';
       const predA = pred !== undefined ? pred.away : '';
 
+      const disabledAttr = locked ? 'disabled' : '';
+      const lockedClass = locked ? ' match-locked' : '';
+
       html += `
-      <div class="${cardClass}" id="card-${m.id}">
+      <div class="${cardClass}${lockedClass}" id="card-${m.id}">
         <div class="match-meta">
           <div class="match-meta-left">
             <span class="match-num">Partido ${m.id}</span>
@@ -2231,9 +2381,9 @@ function renderMatches() {
             <div class="team-name">${m.home}</div>
           </div>
           <div class="score-area">
-            <input type="number" class="score-box" id="pred-${m.id}-h" value="${predH}" min="0" max="20" placeholder="–" oninput="autoSave(${m.id})" onchange="autoSave(${m.id})">
+            <input type="number" class="score-box" id="pred-${m.id}-h" value="${predH}" min="0" max="20" placeholder="–" ${disabledAttr} ${locked ? '' : `oninput="autoSave(${m.id})" onchange="autoSave(${m.id})"`}>
             <span class="score-sep">:</span>
-            <input type="number" class="score-box" id="pred-${m.id}-a" value="${predA}" min="0" max="20" placeholder="–" oninput="autoSave(${m.id})" onchange="autoSave(${m.id})">
+            <input type="number" class="score-box" id="pred-${m.id}-a" value="${predA}" min="0" max="20" placeholder="–" ${disabledAttr} ${locked ? '' : `oninput="autoSave(${m.id})" onchange="autoSave(${m.id})"`}>
           </div>
           <div class="team">
             <span class="team-flag">${aFlag}</span>
@@ -2245,7 +2395,7 @@ function renderMatches() {
           Resultado real: <span style="color:var(--verde); font-weight:700">${result.home} - ${result.away}</span>
         </div>` : ''}
         <div class="match-actions">
-          ${pred !== undefined ? `<button class="btn-clear" onclick="clearPrediction(${m.id})" title="Borrar predicción">✕ Limpiar</button>` : ''}
+          ${!locked && pred !== undefined ? `<button class="btn-clear" onclick="clearPrediction(${m.id})" title="Borrar predicción">✕ Limpiar</button>` : ''}
           <button class="btn-compare" onclick="toggleCompare(${m.id})" id="cmp-btn-${m.id}" title="Ver pronósticos de otros jugadores">👥 Comparar</button>
         </div>
         <div class="compare-panel" id="cmp-panel-${m.id}">
@@ -2269,6 +2419,13 @@ function savePrediction(matchId, silent = false) {
   const h = document.getElementById(`pred-${matchId}-h`);
   const a = document.getElementById(`pred-${matchId}-a`);
   if (!h || !a) return;
+
+  // Check if match is locked
+  const match = MATCHES.find(m => m.id === matchId);
+  if (match && isMatchLocked(match)) {
+    if (!silent) showToast('🔒 Pronóstico cerrado — el partido ya comenzó');
+    return;
+  }
 
   const hVal = h.value.trim();
   const aVal = a.value.trim();
@@ -2296,6 +2453,7 @@ function savePrediction(matchId, silent = false) {
 function saveAllPredictions() {
   let saved = 0;
   MATCHES.forEach(m => {
+    if (isMatchLocked(m)) return; // skip locked matches
     const h = document.getElementById(`pred-${m.id}-h`);
     const a = document.getElementById(`pred-${m.id}-a`);
     if (!h || !a) return;
@@ -2314,6 +2472,11 @@ function saveAllPredictions() {
 }
 
 function clearPrediction(matchId) {
+  const match = MATCHES.find(m => m.id === matchId);
+  if (match && isMatchLocked(match)) {
+    showToast('🔒 No puedes borrar — el partido ya comenzó');
+    return;
+  }
   console.log(`[CLEAR] Borrando predicción — jugador: ${currentPlayer}, partido: ${matchId}`);
   delete state.players[currentPlayer].predictions[String(matchId)];
   saveState();
@@ -2371,7 +2534,7 @@ function renderComparePanel(matchId) {
     return `
       <div class="compare-row${isMe ? ' is-me' : ''}">
         <div class="compare-player">
-          <span class="compare-avatar">${p.avatar}</span>
+          <span class="compare-avatar">${avatarHTML(p.id, p.name, 'sm')}</span>
           <span class="compare-name">${p.name}</span>
           ${isMe ? '<span class="compare-me-tag">Tú</span>' : ''}
         </div>
@@ -2441,7 +2604,7 @@ function renderLeaderboard() {
   body.innerHTML = sorted.map((p, i) => `
     <div class="lb-row">
       <div class="lb-pos ${medals[i] || 'pos-other'}">${i+1}</div>
-      <div class="lb-avatar">${p.avatar}</div>
+      <div class="lb-avatar">${avatarHTML(p.id, p.name, 'lg')}</div>
       <div style="flex:1">
         <div class="lb-name">${p.name}</div>
         <div class="lb-breakdown">
@@ -3293,7 +3456,7 @@ function renderConfiguracion() {
   const list = document.getElementById('config-players-list');
   list.innerHTML = getPlayers().map(p => `
     <div class="config-player-row">
-      <div class="config-avatar">${p.avatar}</div>
+      <div class="config-avatar">${avatarHTML(p.id, p.name, 'lg')}</div>
       <input type="text" class="config-name-input" id="cfg-name-${p.id}" value="${p.name}" maxlength="30" placeholder="Nombre del jugador">
     </div>
   `).join('');
@@ -3317,7 +3480,9 @@ function savePlayerNames() {
   showToast('✓ Nombres guardados');
   // Update current user bar if needed
   if (currentPlayer) {
-    document.getElementById('current-user-name').textContent = state.players[currentPlayer].name;
+    const ps = state.players[currentPlayer];
+    document.getElementById('current-user-name').textContent = ps.name;
+    document.getElementById('current-user-avatar').innerHTML = avatarHTML(currentPlayer, ps.name, 'md');
   }
   renderPlayerSelect();
 }
@@ -3371,8 +3536,9 @@ function importJSON(event) {
       showToast('✓ Datos importados correctamente');
       // Re-render current section
       if (currentPlayer && state.players[currentPlayer]) {
-        document.getElementById('current-user-name').textContent = state.players[currentPlayer].name;
-        document.getElementById('current-user-avatar').textContent = state.players[currentPlayer].avatar;
+        const ps = state.players[currentPlayer];
+        document.getElementById('current-user-name').textContent = ps.name;
+        document.getElementById('current-user-avatar').innerHTML = avatarHTML(currentPlayer, ps.name, 'md');
         renderAll();
       } else {
         changePlayer();
@@ -3456,6 +3622,11 @@ async function initApp() {
     <div class="player-grid" id="player-grid"></div>`;
 
   renderPlayerSelect();
+
+  // Auto-refresh predicciones cada 60s para activar bloqueos al iniciar partidos
+  setInterval(() => {
+    if (currentPlayer && currentSection === 'predicciones') renderMatches();
+  }, 60000);
 }
 
 // Esperar a que el módulo de Firebase haya terminado de inicializar
