@@ -338,6 +338,18 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-height: 22px;
+  }
+
+  .match-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
   }
 
   .match-num {
@@ -346,6 +358,8 @@
     background: var(--fondo3);
     padding: 2px 8px;
     border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .match-grupo {
@@ -353,11 +367,14 @@
     color: var(--amarillo);
     font-weight: 700;
     letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .match-date {
     font-size: 0.7rem;
     color: var(--texto2);
+    white-space: nowrap;
   }
 
   .match-teams {
@@ -468,13 +485,37 @@
   .btn-clear:hover { border-color: var(--rojo); color: var(--rojo); }
 
   .prediction-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 0.65rem;
-    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.62rem;
+    padding: 2px 7px;
     border-radius: 10px;
     font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  /* ── RESPONSIVE: badge + meta en móvil ── */
+  @media (max-width: 480px) {
+    .match-meta {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .match-meta-left {
+      gap: 4px;
+    }
+    .match-date {
+      font-size: 0.65rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+    .prediction-badge {
+      font-size: 0.6rem;
+      padding: 2px 6px;
+    }
   }
 
   /* ── COMPARAR PRONÓSTICOS ── */
@@ -2176,11 +2217,13 @@ function renderMatches() {
 
       html += `
       <div class="${cardClass}" id="card-${m.id}">
-        ${badge}
         <div class="match-meta">
-          <span class="match-num">Partido ${m.id}</span>
-          <span class="match-grupo">GRUPO ${m.grupo}</span>
-          <span class="match-date">${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}</span>
+          <div class="match-meta-left">
+            <span class="match-num">Partido ${m.id}</span>
+            <span class="match-grupo">GRUPO ${m.grupo}</span>
+            <span class="match-date">${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}</span>
+          </div>
+          ${badge}
         </div>
         <div class="match-teams">
           <div class="team">
