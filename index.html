@@ -477,6 +477,132 @@
     font-weight: 700;
   }
 
+  /* ── COMPARAR PRONÓSTICOS ── */
+  .btn-compare {
+    padding: 6px 10px;
+    background: rgba(255,214,0,0.08);
+    color: var(--amarillo);
+    border: 1px solid rgba(255,214,0,0.25);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .btn-compare:hover {
+    background: rgba(255,214,0,0.18);
+    border-color: var(--amarillo);
+  }
+
+  .compare-panel {
+    display: none;
+    margin-top: 12px;
+    background: var(--fondo3);
+    border: 1px solid rgba(255,214,0,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .compare-panel.open { display: block; }
+
+  .compare-panel-title {
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--amarillo);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,214,0,0.05);
+  }
+
+  .compare-rows {
+    padding: 6px 0;
+  }
+
+  .compare-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    gap: 10px;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+
+  .compare-row:hover { background: rgba(255,255,255,0.03); }
+
+  .compare-row.is-me {
+    background: rgba(0,200,83,0.06);
+  }
+
+  .compare-player {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .compare-avatar { font-size: 1.1rem; flex-shrink: 0; }
+
+  .compare-name {
+    font-weight: 600;
+    color: var(--texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+
+  .compare-me-tag {
+    font-size: 0.6rem;
+    background: rgba(0,200,83,0.2);
+    color: var(--verde);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .compare-score {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .compare-score-val {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: var(--texto);
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .compare-no-pred {
+    color: var(--texto2);
+    font-size: 0.75rem;
+    font-style: italic;
+  }
+
+  .compare-pts-badge {
+    font-size: 0.62rem;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .cpts-3 { background: rgba(0,200,83,0.2); color: var(--verde); }
+  .cpts-1 { background: rgba(255,214,0,0.15); color: var(--amarillo); }
+  .cpts-0 { background: rgba(229,57,53,0.15); color: var(--rojo); }
+  .cpts-pending { background: rgba(138,155,176,0.12); color: var(--texto2); }
+
   .badge-saved { background: rgba(0,200,83,0.15); color: var(--verde); }
   .badge-correct { background: rgba(0,200,83,0.25); color: var(--verde); }
   .badge-wrong { background: rgba(229,57,53,0.2); color: var(--rojo); }
@@ -2077,6 +2203,11 @@ function renderMatches() {
         </div>` : ''}
         <div class="match-actions">
           ${pred !== undefined ? `<button class="btn-clear" onclick="clearPrediction(${m.id})" title="Borrar predicción">✕ Limpiar</button>` : ''}
+          <button class="btn-compare" onclick="toggleCompare(${m.id})" id="cmp-btn-${m.id}" title="Ver pronósticos de otros jugadores">👥 Comparar</button>
+        </div>
+        <div class="compare-panel" id="cmp-panel-${m.id}">
+          <div class="compare-panel-title">👥 Pronósticos del grupo</div>
+          <div class="compare-rows" id="cmp-rows-${m.id}"></div>
         </div>
       </div>`;
     });
@@ -2144,6 +2275,71 @@ function clearPrediction(matchId) {
   delete state.players[currentPlayer].predictions[String(matchId)];
   saveState();
   renderMatches();
+}
+
+// ═══════════════════════════════════════════
+//  COMPARAR PRONÓSTICOS
+// ═══════════════════════════════════════════
+function toggleCompare(matchId) {
+  const panel = document.getElementById(`cmp-panel-${matchId}`);
+  const btn   = document.getElementById(`cmp-btn-${matchId}`);
+  if (!panel) return;
+
+  const isOpen = panel.classList.contains('open');
+  if (isOpen) {
+    panel.classList.remove('open');
+    btn.innerHTML = '👥 Comparar';
+  } else {
+    renderComparePanel(matchId);
+    panel.classList.add('open');
+    btn.innerHTML = '👥 Ocultar';
+  }
+}
+
+function renderComparePanel(matchId) {
+  const rows = document.getElementById(`cmp-rows-${matchId}`);
+  if (!rows) return;
+
+  const result = state.results[matchId];
+  const players = getPlayers();
+
+  const html = players.map(p => {
+    const isMe = p.id === currentPlayer;
+    const pred = p.predictions[String(matchId)];
+
+    let scoreHtml = '';
+    let badgeHtml = '';
+
+    if (pred !== undefined) {
+      scoreHtml = `<span class="compare-score-val">${pred.home} - ${pred.away}</span>`;
+      if (result !== undefined) {
+        const pts = calcMatchPoints(pred, result);
+        if (pts === 3)      badgeHtml = `<span class="compare-pts-badge cpts-3">+3 ✓</span>`;
+        else if (pts === 1) badgeHtml = `<span class="compare-pts-badge cpts-1">+1 →</span>`;
+        else                badgeHtml = `<span class="compare-pts-badge cpts-0">✗</span>`;
+      } else {
+        badgeHtml = `<span class="compare-pts-badge cpts-pending">Pendiente</span>`;
+      }
+    } else {
+      scoreHtml = `<span class="compare-no-pred">Sin predicción</span>`;
+      badgeHtml = `<span class="compare-pts-badge cpts-pending">—</span>`;
+    }
+
+    return `
+      <div class="compare-row${isMe ? ' is-me' : ''}">
+        <div class="compare-player">
+          <span class="compare-avatar">${p.avatar}</span>
+          <span class="compare-name">${p.name}</span>
+          ${isMe ? '<span class="compare-me-tag">Tú</span>' : ''}
+        </div>
+        <div class="compare-score">
+          ${scoreHtml}
+          ${badgeHtml}
+        </div>
+      </div>`;
+  }).join('');
+
+  rows.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════
