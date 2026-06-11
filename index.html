@@ -338,6 +338,18 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-height: 22px;
+  }
+
+  .match-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
   }
 
   .match-num {
@@ -346,6 +358,8 @@
     background: var(--fondo3);
     padding: 2px 8px;
     border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .match-grupo {
@@ -353,11 +367,14 @@
     color: var(--amarillo);
     font-weight: 700;
     letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .match-date {
     font-size: 0.7rem;
     color: var(--texto2);
+    white-space: nowrap;
   }
 
   .match-teams {
@@ -468,13 +485,37 @@
   .btn-clear:hover { border-color: var(--rojo); color: var(--rojo); }
 
   .prediction-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 0.65rem;
-    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.62rem;
+    padding: 2px 7px;
     border-radius: 10px;
     font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  /* ── RESPONSIVE: badge + meta en móvil ── */
+  @media (max-width: 480px) {
+    .match-meta {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .match-meta-left {
+      gap: 4px;
+    }
+    .match-date {
+      font-size: 0.65rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+    .prediction-badge {
+      font-size: 0.6rem;
+      padding: 2px 6px;
+    }
   }
 
   /* ── COMPARAR PRONÓSTICOS ── */
@@ -2176,11 +2217,13 @@ function renderMatches() {
 
       html += `
       <div class="${cardClass}" id="card-${m.id}">
-        ${badge}
         <div class="match-meta">
-          <span class="match-num">Partido ${m.id}</span>
-          <span class="match-grupo">GRUPO ${m.grupo}</span>
-          <span class="match-date">${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}</span>
+          <div class="match-meta-left">
+            <span class="match-num">Partido ${m.id}</span>
+            <span class="match-grupo">GRUPO ${m.grupo}</span>
+            <span class="match-date">${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}</span>
+          </div>
+          ${badge}
         </div>
         <div class="match-teams">
           <div class="team">
@@ -2972,86 +3015,93 @@ function renderAdmin() {
 }
 
 // ═══════════════════════════════════════════
-//  ACTUALIZAR RESULTADOS OFICIALES
-//  Fuentes (cascada sin API key):
-//    1. worldcup26.ir        — API dedicada Mundial 2026, live
-//    2. openfootball/worldcup.json — GitHub, actualizado ~1×/día
-//    3. ESPN public API      — fallback global confiable
+//  ACTUALIZAR RESULTADOS OFICIALES — TheSportsDB
 // ═══════════════════════════════════════════
+//
+//  ┌──────────────────────────────────────────────────────────┐
+//  │  CONFIGURACIÓN API KEY                                   │
+//  │                                                          │
+//  │  TheSportsDB Free (v1) NO requiere API Key.              │
+//  │  La función usa el endpoint público gratuito:            │
+//  │    https://www.thesportsdb.com/api/v1/json/3/            │
+//  │                                                          │
+//  │  Si tienes suscripción Patreon (v2), cambia la línea:    │
+//  │    const TSDB_API_KEY = "3";   ← cambia "3" por tu key  │
+//  │  Encuéntrala en: https://www.thesportsdb.com/dashboard   │
+//  └──────────────────────────────────────────────────────────┘
+const TSDB_API_KEY = "3"; // "3" = free tier sin key. Reemplaza por tu key Patreon si tienes.
+const TSDB_LEAGUE_ID = "4980"; // FIFA World Cup 2026
 
-// Mapa inglés/variantes → nombres exactos de tu app
-const TEAM_NAME_MAP = {
-  'Mexico':                   'México',
-  'South Africa':             'Sudáfrica',
-  'South Korea':              'Corea del Sur',
-  'Korea Republic':           'Corea del Sur',
-  'Czech Republic':           'República Checa',
-  'Czechia':                  'República Checa',
-  'Canada':                   'Canadá',
-  'Bosnia and Herzegovina':   'Bosnia y Herzegovina',
-  'Bosnia & Herzegovina':     'Bosnia y Herzegovina',
-  'Qatar':                    'Catar',
-  'Switzerland':              'Suiza',
-  'Brazil':                   'Brasil',
-  'Morocco':                  'Marruecos',
-  'Haiti':                    'Haití',
-  'Scotland':                 'Escocia',
-  'United States':            'Estados Unidos',
-  'USA':                      'Estados Unidos',
-  'US':                       'Estados Unidos',
-  'Paraguay':                 'Paraguay',
-  'Australia':                'Australia',
-  'Turkey':                   'Turquía',
-  'Turkiye':                  'Turquía',
-  'Germany':                  'Alemania',
-  'Curacao':                  'Curazao',
-  'Curaçao':                  'Curazao',
-  'Ivory Coast':              'Costa de Marfil',
-  "Cote d'Ivoire":            'Costa de Marfil',
-  "Côte d'Ivoire":            'Costa de Marfil',
-  'Ecuador':                  'Ecuador',
-  'Netherlands':              'Países Bajos',
-  'Holland':                  'Países Bajos',
-  'Japan':                    'Japón',
-  'Sweden':                   'Suecia',
-  'Tunisia':                  'Túnez',
-  'Belgium':                  'Bélgica',
-  'Egypt':                    'Egipto',
-  'Iran':                     'Irán',
-  'IR Iran':                  'Irán',
-  'New Zealand':              'Nueva Zelanda',
-  'Spain':                    'España',
-  'Cape Verde':               'Cabo Verde',
-  'Saudi Arabia':             'Arabia Saudita',
-  'Uruguay':                  'Uruguay',
-  'France':                   'Francia',
-  'Senegal':                  'Senegal',
-  'Iraq':                     'Irak',
-  'Norway':                   'Noruega',
-  'Argentina':                'Argentina',
-  'Algeria':                  'Argelia',
-  'Austria':                  'Austria',
-  'Jordan':                   'Jordania',
-  'Portugal':                 'Portugal',
-  'DR Congo':                 'RD Congo',
-  'Congo DR':                 'RD Congo',
-  'Democratic Republic of Congo': 'RD Congo',
-  'Uzbekistan':               'Uzbekistán',
-  'Colombia':                 'Colombia',
-  'England':                  'Inglaterra',
-  'Croatia':                  'Croacia',
-  'Ghana':                    'Ghana',
-  'Panama':                   'Panamá',
+// Mapa de nombres en TheSportsDB → nombres en tu app
+const TSDB_TEAM_NAME_MAP = {
+  // Inglés → Español (los nombres de tu app)
+  'Mexico':             'México',
+  'South Africa':       'Sudáfrica',
+  'South Korea':        'Corea del Sur',
+  'Czech Republic':     'República Checa',
+  'Canada':             'Canadá',
+  'Bosnia and Herzegovina': 'Bosnia y Herzegovina',
+  'Qatar':              'Catar',
+  'Switzerland':        'Suiza',
+  'Brazil':             'Brasil',
+  'Morocco':            'Marruecos',
+  'Haiti':              'Haití',
+  'Scotland':           'Escocia',
+  'United States':      'Estados Unidos',
+  'USA':                'Estados Unidos',
+  'Paraguay':           'Paraguay',
+  'Australia':          'Australia',
+  'Turkey':             'Turquía',
+  'Germany':            'Alemania',
+  'Curacao':            'Curazao',
+  "Ivory Coast":        'Costa de Marfil',
+  "Cote d'Ivoire":      'Costa de Marfil',
+  'Ecuador':            'Ecuador',
+  'Netherlands':        'Países Bajos',
+  'Holland':            'Países Bajos',
+  'Japan':              'Japón',
+  'Sweden':             'Suecia',
+  'Tunisia':            'Túnez',
+  'Belgium':            'Bélgica',
+  'Egypt':              'Egipto',
+  'Iran':               'Irán',
+  'New Zealand':        'Nueva Zelanda',
+  'Spain':              'España',
+  'Cape Verde':         'Cabo Verde',
+  'Saudi Arabia':       'Arabia Saudita',
+  'Uruguay':            'Uruguay',
+  'France':             'Francia',
+  'Senegal':            'Senegal',
+  'Iraq':               'Irak',
+  'Norway':             'Noruega',
+  'Argentina':          'Argentina',
+  'Algeria':            'Argelia',
+  'Austria':            'Austria',
+  'Jordan':             'Jordania',
+  'Portugal':           'Portugal',
+  'DR Congo':           'RD Congo',
+  'Congo DR':           'RD Congo',
+  'Uzbekistan':         'Uzbekistán',
+  'Colombia':           'Colombia',
+  'England':            'Inglaterra',
+  'Croatia':            'Croacia',
+  'Ghana':              'Ghana',
+  'Panama':             'Panamá',
+  // Por si ya vienen en español exacto (no hace daño)
+  'México':'México','Sudáfrica':'Sudáfrica','Corea del Sur':'Corea del Sur',
 };
 
-function normalizarEquipo(nombre) {
+function normalizarNombreEquipo(nombre) {
   if (!nombre) return nombre;
-  return TEAM_NAME_MAP[nombre] || nombre;
+  return TSDB_TEAM_NAME_MAP[nombre] || nombre;
 }
 
+// Buscar partido local por equipos normalizados
 function buscarPartidoLocal(homeNorm, awayNorm) {
+  // Intento exacto
   let m = MATCHES.find(m => m.home === homeNorm && m.away === awayNorm);
   if (m) return m;
+  // Intento invertido (por si TheSportsDB los lista al revés)
   m = MATCHES.find(m => m.home === awayNorm && m.away === homeNorm);
   if (m) return { ...m, _invertido: true };
   return null;
@@ -3067,182 +3117,155 @@ function logLine(text, tipo = '') {
   panel.scrollTop = panel.scrollHeight;
 }
 
-// ── FUENTE 1: worldcup26.ir ──────────────────────────────────────
-async function fetchWorldcup26ir() {
-  const url = 'https://worldcup26.ir/get/games';
-  const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
-  if (!resp.ok) throw new Error(`worldcup26.ir HTTP ${resp.status}`);
-  const data = await resp.json();
-  // Estructura esperada: array de partidos con campos home_score / away_score / home_team / away_team / status
-  const matches = Array.isArray(data) ? data : (data.games || data.matches || data.data || []);
-  if (!matches.length) throw new Error('worldcup26.ir: sin partidos');
-  const resultado = [];
-  for (const g of matches) {
-    const homeRaw   = g.home_team?.name || g.homeTeam?.name || g.home_team || g.homeTeam || '';
-    const awayRaw   = g.away_team?.name || g.awayTeam?.name || g.away_team || g.awayTeam || '';
-    const homeScore = parseInt(g.home_score ?? g.homeScore ?? g.score?.home ?? '');
-    const awayScore = parseInt(g.away_score ?? g.awayScore ?? g.score?.away ?? '');
-    if (!homeRaw || !awayRaw || isNaN(homeScore) || isNaN(awayScore)) continue;
-    resultado.push({ homeRaw, awayRaw, homeScore, awayScore });
-  }
-  if (!resultado.length) throw new Error('worldcup26.ir: sin resultados con marcador');
-  return { partidos: resultado, fuente: 'worldcup26.ir' };
-}
-
-// ── FUENTE 2: openfootball / worldcup.json en GitHub ─────────────
-async function fetchOpenfootball() {
-  // Añade timestamp para evitar caché del navegador
-  const url = `https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json?t=${Date.now()}`;
-  const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
-  if (!resp.ok) throw new Error(`openfootball HTTP ${resp.status}`);
-  const data = await resp.json();
-  const matches = data.matches || [];
-  if (!matches.length) throw new Error('openfootball: sin partidos');
-  const resultado = [];
-  for (const g of matches) {
-    // score1/score2 solo existen cuando el partido ha terminado
-    if (g.score1 === undefined || g.score1 === null) continue;
-    if (g.score2 === undefined || g.score2 === null) continue;
-    const homeScore = parseInt(g.score1);
-    const awayScore = parseInt(g.score2);
-    if (isNaN(homeScore) || isNaN(awayScore)) continue;
-    resultado.push({ homeRaw: g.team1, awayRaw: g.team2, homeScore, awayScore });
-  }
-  if (!resultado.length) throw new Error('openfootball: sin resultados con marcador aún');
-  return { partidos: resultado, fuente: 'openfootball/worldcup.json (GitHub)' };
-}
-
-// ── FUENTE 3: ESPN public API ─────────────────────────────────────
-async function fetchESPN() {
-  // ESPN scoreboard para World Cup 2026 (FIFA = 660)
-  const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
-  const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
-  if (!resp.ok) throw new Error(`ESPN HTTP ${resp.status}`);
-  const data = await resp.json();
-  const events = data.events || [];
-  if (!events.length) throw new Error('ESPN: sin eventos');
-  const resultado = [];
-  for (const ev of events) {
-    const comp = ev.competitions?.[0];
-    if (!comp) continue;
-    const status = comp.status?.type?.name || '';
-    // Solo partidos finalizados
-    if (status !== 'STATUS_FINAL') continue;
-    const [homeComp, awayComp] = comp.competitors || [];
-    if (!homeComp || !awayComp) continue;
-    const homeRaw   = homeComp.team?.displayName || homeComp.team?.name || '';
-    const awayRaw   = awayComp.team?.displayName || awayComp.team?.name || '';
-    const homeScore = parseInt(homeComp.score);
-    const awayScore = parseInt(awayComp.score);
-    if (isNaN(homeScore) || isNaN(awayScore)) continue;
-    resultado.push({ homeRaw, awayRaw, homeScore, awayScore });
-  }
-  if (!resultado.length) throw new Error('ESPN: sin resultados finalizados');
-  return { partidos: resultado, fuente: 'ESPN API' };
-}
-
-// ── PROCESADOR COMÚN ─────────────────────────────────────────────
-function procesarPartidos(partidos) {
-  let actualizados = 0, noEncontrados = 0;
-  for (const { homeRaw, awayRaw, homeScore, awayScore } of partidos) {
-    const homeNorm = normalizarEquipo(homeRaw);
-    const awayNorm = normalizarEquipo(awayRaw);
-    const partido  = buscarPartidoLocal(homeNorm, awayNorm);
-    if (!partido) {
-      noEncontrados++;
-      logLine(`⚠️ Sin mapeo: "${homeRaw}" vs "${awayRaw}"`, 'warn');
-      continue;
-    }
-    let h = homeScore, a = awayScore;
-    if (partido._invertido) { h = awayScore; a = homeScore; }
-    const anterior = state.results[partido.id];
-    if (!anterior || anterior.home !== h || anterior.away !== a) {
-      state.results[partido.id] = { home: h, away: a };
-      actualizados++;
-      logLine(`✓ P.${partido.id}  ${partido.home} ${h}–${a} ${partido.away}`, 'ok');
-    }
-  }
-  return { actualizados, noEncontrados };
-}
-
-// ── FUNCIÓN PRINCIPAL ─────────────────────────────────────────────
 async function actualizarResultadosOficiales() {
-  const btn          = document.getElementById('btn-actualizar-oficial');
-  const logPanel     = document.getElementById('update-log-panel');
+  const btn = document.getElementById('btn-actualizar-oficial');
+  const logPanel = document.getElementById('update-log-panel');
   const summaryPanel = document.getElementById('update-summary-panel');
 
-  btn.disabled  = true;
-  btn.innerHTML = '<span class="spin">🔄</span> Consultando fuentes…';
+  // Reset UI
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">🔄</span> Consultando TheSportsDB…';
   logPanel.innerHTML = '';
   logPanel.classList.add('visible');
   summaryPanel.classList.remove('visible');
   summaryPanel.innerHTML = '';
 
-  const FUENTES = [
-    { nombre: 'worldcup26.ir',               fn: fetchWorldcup26ir },
-    { nombre: 'openfootball/worldcup.json',  fn: fetchOpenfootball },
-    { nombre: 'ESPN API',                    fn: fetchESPN         },
-  ];
+  let actualizados = 0, sinResultado = 0, noEncontrados = 0, errores = 0;
 
-  let fuenteUsada = null;
-  let partidos    = [];
+  try {
+    logLine('📡 Conectando con TheSportsDB…', 'info');
 
-  for (const fuente of FUENTES) {
-    logLine(`📡 Intentando ${fuente.nombre}…`, 'info');
+    // TheSportsDB API: buscar eventos de la liga/temporada
+    // Intentamos con el endpoint de búsqueda por liga y temporada 2026
+    const season = '2026';
+    const url = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/eventsseason.php?id=${TSDB_LEAGUE_ID}&s=${season}`;
+
+    logLine(`🔗 URL: ${url}`, 'info');
+
+    let eventos = [];
     try {
-      const res = await fuente.fn();
-      partidos   = res.partidos;
-      fuenteUsada = res.fuente;
-      logLine(`✓ ${fuenteUsada}: ${partidos.length} partido(s) con resultado`, 'ok');
-      break;
-    } catch (err) {
-      logLine(`✗ ${fuente.nombre} falló: ${err.message}`, 'warn');
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      eventos = data.events || [];
+      logLine(`✓ Recibidos ${eventos.length} eventos del torneo`, 'ok');
+    } catch (fetchErr) {
+      // Fallback: intentar con búsqueda por nombre del evento
+      logLine(`⚠️ Endpoint de temporada falló: ${fetchErr.message}`, 'warn');
+      logLine('🔄 Intentando búsqueda alternativa por nombre…', 'info');
+      try {
+        const url2 = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/searchevents.php?e=FIFA+World+Cup+2026`;
+        const resp2 = await fetch(url2);
+        const data2 = await resp2.json();
+        eventos = data2.event || [];
+        logLine(`✓ Búsqueda alternativa: ${eventos.length} eventos`, 'ok');
+      } catch (e2) {
+        throw new Error('No se pudo obtener datos de TheSportsDB. Verifica tu conexión o API Key.');
+      }
     }
-  }
 
-  if (!partidos.length) {
-    logLine('ℹ️ Ninguna fuente tiene resultados aún — el torneo acaba de comenzar.', 'warn');
-    logLine('   Vuelve a intentar después de cada partido.', 'warn');
+    if (eventos.length === 0) {
+      logLine('⚠️ TheSportsDB no tiene aún resultados para el Mundial 2026.', 'warn');
+      logLine('   Los resultados estarán disponibles cuando comiencen los partidos (11 Jun 2026).', 'warn');
+      summaryPanel.innerHTML = `<strong>Sin datos disponibles aún.</strong> TheSportsDB publicará los resultados cuando los partidos se jueguen. Puedes volver a intentarlo durante o después de cada partido.`;
+      summaryPanel.classList.add('visible');
+      return;
+    }
+
+    // Filtrar solo partidos con resultado (FT = Full Time)
+    const jugados = eventos.filter(e =>
+      e.strStatus === 'Match Finished' ||
+      e.strStatus === 'FT' ||
+      e.intHomeScore !== null && e.intHomeScore !== '' &&
+      e.intAwayScore !== null && e.intAwayScore !== ''
+    );
+
+    logLine(`📊 Partidos con resultado: ${jugados.length} de ${eventos.length}`, 'info');
+
+    if (jugados.length === 0) {
+      logLine('ℹ️ Ningún partido tiene resultado aún. Vuelve a intentarlo después de los primeros partidos.', 'warn');
+      summaryPanel.innerHTML = `<strong>Sin resultados aún.</strong> El torneo aún no ha comenzado o los partidos están pendientes.`;
+      summaryPanel.classList.add('visible');
+      return;
+    }
+
+    // Procesar cada partido con resultado
+    for (const ev of jugados) {
+      const homeRaw = ev.strHomeTeam;
+      const awayRaw = ev.strAwayTeam;
+      const homeNorm = normalizarNombreEquipo(homeRaw);
+      const awayNorm = normalizarNombreEquipo(awayRaw);
+      const homeScore = parseInt(ev.intHomeScore);
+      const awayScore = parseInt(ev.intAwayScore);
+
+      if (isNaN(homeScore) || isNaN(awayScore)) {
+        sinResultado++;
+        continue;
+      }
+
+      const partido = buscarPartidoLocal(homeNorm, awayNorm);
+
+      if (!partido) {
+        noEncontrados++;
+        logLine(`⚠️ No encontrado: "${homeRaw}" vs "${awayRaw}" → normalizado: "${homeNorm}" vs "${awayNorm}"`, 'warn');
+        continue;
+      }
+
+      const matchId = partido.id;
+      let h = homeScore, a = awayScore;
+      if (partido._invertido) { h = awayScore; a = homeScore; }
+
+      const anterior = state.results[matchId];
+      const cambio = !anterior || anterior.home !== h || anterior.away !== a;
+
+      if (cambio) {
+        state.results[matchId] = { home: h, away: a };
+        actualizados++;
+        logLine(`✓ P.${matchId} ${partido.home} ${h}-${a} ${partido.away}`, 'ok');
+      }
+    }
+
+    // Guardar en Firestore si hubo cambios
+    if (actualizados > 0) {
+      logLine(`💾 Guardando ${actualizados} resultado(s) en Firestore…`, 'info');
+      await saveState();
+      logLine('✓ Firestore actualizado', 'ok');
+
+      // Refrescar todas las vistas
+      renderAll();
+      if (currentSection !== 'admin') renderAdmin();
+    }
+
+    // Resumen final
+    const totalLocal = MATCHES.length;
+    const totalConResult = Object.keys(state.results).length;
     summaryPanel.innerHTML = `
-      <strong>Sin resultados disponibles aún.</strong><br>
-      <span style="color:var(--texto2);font-size:0.8rem">
-        Las tres fuentes consultadas (worldcup26.ir, openfootball, ESPN) no reportan
-        marcadores finalizados todavía. Intenta de nuevo después del primer partido.
+      <strong>✅ Actualización completada</strong><br>
+      <span style="color:var(--verde)">+${actualizados} resultado(s) nuevos/actualizados</span> ·
+      ${totalConResult} de ${totalLocal} partidos con resultado ·
+      ${noEncontrados > 0 ? `<span style="color:var(--amarillo)">${noEncontrados} sin mapeo</span>` : ''}
+      <br><span style="font-size:0.73rem;color:var(--texto2);margin-top:4px;display:block">
+      Fuente: TheSportsDB · ${new Date().toLocaleString('es-CO', {timeZone:'America/Bogota'})}
       </span>`;
     summaryPanel.classList.add('visible');
-    btn.disabled  = false;
+
+    if (actualizados === 0) {
+      showToast('ℹ️ Sin cambios — resultados ya estaban al día');
+    } else {
+      showToast(`✓ ${actualizados} resultado(s) actualizados`);
+    }
+
+  } catch (err) {
+    errores++;
+    logLine(`❌ Error: ${err.message}`, 'err');
+    summaryPanel.innerHTML = `<strong style="color:var(--rojo)">❌ Error al actualizar:</strong> ${err.message}`;
+    summaryPanel.classList.add('visible');
+    showToast('❌ Error al consultar TheSportsDB');
+    console.error('[TSDB]', err);
+  } finally {
+    btn.disabled = false;
     btn.innerHTML = '🔄 Actualizar resultados oficiales';
-    return;
   }
-
-  logLine(`⚙️ Procesando ${partidos.length} resultado(s)…`, 'info');
-  const { actualizados, noEncontrados } = procesarPartidos(partidos);
-
-  if (actualizados > 0) {
-    logLine(`💾 Guardando ${actualizados} resultado(s) en Firestore…`, 'info');
-    await saveState();
-    logLine('✓ Firestore actualizado', 'ok');
-    renderAll();
-    if (currentSection !== 'admin') renderAdmin();
-  }
-
-  const totalConResult = Object.keys(state.results).length;
-  summaryPanel.innerHTML = `
-    <strong>✅ Actualización completada</strong><br>
-    <span style="color:var(--verde)">+${actualizados} resultado(s) nuevos/actualizados</span> ·
-    ${totalConResult} de ${MATCHES.length} partidos con resultado
-    ${noEncontrados > 0 ? ` · <span style="color:var(--amarillo)">${noEncontrados} sin mapeo</span>` : ''}
-    <br><span style="font-size:0.73rem;color:var(--texto2);margin-top:4px;display:block">
-      Fuente: ${fuenteUsada} · ${new Date().toLocaleString('es-CO', {timeZone:'America/Bogota'})}
-    </span>`;
-  summaryPanel.classList.add('visible');
-
-  showToast(actualizados > 0
-    ? `✓ ${actualizados} resultado(s) actualizados`
-    : 'ℹ️ Sin cambios — resultados ya estaban al día');
-
-  btn.disabled  = false;
-  btn.innerHTML = '🔄 Actualizar resultados oficiales';
 }
 
 function saveResult(matchId) {
