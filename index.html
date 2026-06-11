@@ -4,6 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Polla Mundial 2026 ⚽</title>
+
+<!-- ══════════════════════════════════════════════════════════
+     FIREBASE SDK v10
+     Pega aquí tu firebaseConfig (ver instrucciones al final del
+     archivo, en la función initFirebase)
+     ══════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp }         from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, writeBatch }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  // ┌─────────────────────────────────────────────────────────┐
+  // │  ▶▶  PEGA AQUÍ TU firebaseConfig  ◀◀                   │
+  // │  Encuéntrala en Firebase Console →                      │
+  // │  Configuración del proyecto → Tus apps → Web app        │
+  // └─────────────────────────────────────────────────────────┘
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDbAgTHb0lMZanEAC1SmtW5LYoYd2xwWBI",
+    authDomain:        "polla-mundial-gyo-2026.firebaseapp.com",
+    projectId:         "polla-mundial-gyo-2026",
+    storageBucket:     "polla-mundial-gyo-2026.firebasestorage.app",
+    messagingSenderId: "43532257275",
+    appId:             "1:43532257275:web:7480a90a34837b659d6d5e"
+  };
+  // ──────────────────────────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // Exponer en window para que el resto del script (no-module) lo use
+  window._db         = db;
+  window._fsDoc      = doc;
+  window._fsGetDoc   = getDoc;
+  window._fsSetDoc   = setDoc;
+  window._fsOnSnap   = onSnapshot;
+  window._fsCol      = collection;
+  window._fsBatch    = writeBatch;
+  window._firebaseReady = true;
+
+  // Disparar evento cuando Firebase esté listo
+  document.dispatchEvent(new Event('firebase-ready'));
+</script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -1245,6 +1288,58 @@
     .bracket { min-width: 700px; }
     .tab { font-size: 0.68rem; padding: 8px 4px; }
   }
+
+  /* ── ACTUALIZAR RESULTADOS OFICIALES ── */
+  .btn-update-official {
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #0288D1, #0056A3);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 12px rgba(2,136,209,0.3);
+  }
+  .btn-update-official:hover { background: linear-gradient(135deg, #0297e8, #0068c8); box-shadow: 0 4px 20px rgba(2,136,209,0.5); }
+  .btn-update-official:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-update-official .spin { display: inline-block; animation: spin360 1s linear infinite; }
+  @keyframes spin360 { to { transform: rotate(360deg); } }
+
+  .update-log {
+    background: var(--fondo3);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 0.78rem;
+    color: var(--texto2);
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+  }
+  .update-log.visible { display: block; }
+  .update-log .log-line { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .update-log .log-ok  { color: var(--verde); }
+  .update-log .log-warn { color: var(--amarillo); }
+  .update-log .log-err { color: var(--rojo); }
+  .update-log .log-info { color: #64B5F6; }
+
+  .update-summary {
+    background: rgba(0,200,83,0.07);
+    border: 1px solid rgba(0,200,83,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 0.82rem;
+    display: none;
+  }
+  .update-summary.visible { display: block; }
+  .update-summary strong { color: var(--verde); }
 </style>
 </head>
 <body>
@@ -1374,11 +1469,18 @@
     <div id="admin-content" style="display:none">
       <div class="section-header">
         <h2>Ingresar Resultados</h2>
-        <div style="display:flex;gap:10px;align-items:center">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <span class="info-pill">Solo para el administrador</span>
+          <button class="btn-update-official" id="btn-actualizar-oficial" onclick="actualizarResultadosOficiales()">
+            🔄 Actualizar resultados oficiales
+          </button>
           <button class="btn-secondary" style="font-size:0.78rem;padding:5px 12px" onclick="lockAdmin()">🔒 Bloquear</button>
         </div>
       </div>
+
+      <!-- Panel de log de actualización -->
+      <div id="update-log-panel" class="update-log"></div>
+      <div id="update-summary-panel" class="update-summary"></div>
       <div class="jornada-bar">
         <button class="jornada-btn active" onclick="filterAdminJornada(0, this)">Todas</button>
         <button class="jornada-btn" onclick="filterAdminJornada(1, this)">Jornada 1</button>
@@ -1635,11 +1737,12 @@ const R16_PAIRINGS = [
 ];
 
 // ═══════════════════════════════════════════
-//  STATE
+//  STATE  (Firestore)
 // ═══════════════════════════════════════════
 let currentPlayer = null;
 let adminUnlocked = false;
-let state = loadState();
+let state = defaultState();          // cargado desde Firestore al inicio
+let _saveDebounce = null;
 
 function defaultState() {
   return {
@@ -1655,33 +1758,167 @@ function defaultState() {
   };
 }
 
-function loadState() {
+// ── Colecciones Firestore ──
+// players      → doc "data"  { p1:{name,avatar,predictions}, p2:…, p3:…, p4:… }
+// results      → doc "data"  { [matchId]: {home, away}, … }
+// predictions  → doc "data"  { p1:{[matchId]:{home,away},…}, p2:…, … }  (alias para predictions)
+// knockoutResults → dentro de results doc "knockout"
+
+async function loadStateFromFirestore() {
+  const db = window._db;
+  const fsDoc = window._fsDoc;
+  const fsGetDoc = window._fsGetDoc;
+
   try {
-    const raw = localStorage.getItem('polla_mundial_2026_v3');
-    if (!raw) return defaultState();
-    const saved = JSON.parse(raw);
     const def = defaultState();
-    // Merge to ensure all required keys exist
-    if (!saved.players) saved.players = def.players;
+    console.log('[FIRESTORE] Iniciando carga desde Firestore...');
+
+    // Leer players
+    const playersSnap = await fsGetDoc(fsDoc(db, 'players', 'data'));
+    const playersData = playersSnap.exists() ? playersSnap.data() : {};
+    console.log('[FIRESTORE] Players cargados:', playersData);
+
+    // Leer results (partidos de grupos)
+    const resultsSnap = await fsGetDoc(fsDoc(db, 'results', 'data'));
+    const resultsData = resultsSnap.exists() ? resultsSnap.data() : {};
+    console.log('[FIRESTORE] Results cargados:', resultsData);
+
+    // Leer knockoutResults
+    const koSnap = await fsGetDoc(fsDoc(db, 'results', 'knockout'));
+    const koData = koSnap.exists() ? koSnap.data() : {};
+
+    // Leer predictions
+    const predsSnap = await fsGetDoc(fsDoc(db, 'predictions', 'data'));
+    const predsData = predsSnap.exists() ? predsSnap.data() : {};
+    console.log('[FIRESTORE] Predictions cargadas:', predsData);
+
+    // Leer config (adminPassword)
+    const cfgSnap = await fsGetDoc(fsDoc(db, 'players', 'config'));
+    const cfgData = cfgSnap.exists() ? cfgSnap.data() : {};
+
+    // Ensamblar state
     ['p1','p2','p3','p4'].forEach(id => {
-      if (!saved.players[id]) saved.players[id] = def.players[id];
-      if (!saved.players[id].predictions) saved.players[id].predictions = {};
+      // Las predicciones vienen con claves string desde Firestore — se mantienen como string
+      const preds = (predsData[id]) || {};
+      state.players[id] = {
+        name:        (playersData[id] && playersData[id].name)   || def.players[id].name,
+        avatar:      (playersData[id] && playersData[id].avatar) || def.players[id].avatar,
+        predictions: preds,
+      };
+      console.log(`[FIRESTORE] Jugador ${id} — predicciones cargadas: ${Object.keys(preds).length}`);
     });
-    if (!saved.results) saved.results = {};
-    if (!saved.adminPassword) saved.adminPassword = def.adminPassword;
-    if (!saved.knockoutResults) saved.knockoutResults = {};
-    return saved;
+
+    // Convertir keys de results a número (Firestore los devuelve como string)
+    state.results = {};
+    Object.keys(resultsData).forEach(k => {
+      state.results[parseInt(k)] = resultsData[k];
+    });
+
+    state.knockoutResults = koData || {};
+    state.adminPassword   = cfgData.adminPassword || def.adminPassword;
+    console.log('[FIRESTORE] Carga completa ✓ — resultados:', Object.keys(state.results).length);
+
   } catch(e) {
-    return defaultState();
+    console.error('Error cargando desde Firestore:', e);
+    showToast('⚠️ Error conectando con Firestore');
   }
 }
 
-function saveState() {
-  try {
-    localStorage.setItem('polla_mundial_2026_v3', JSON.stringify(state));
-  } catch(e) {
-    console.warn('No se pudo guardar en localStorage:', e);
+async function saveState() {
+  if (!window._firebaseReady) {
+    console.warn('Firebase aún no está listo');
+    return;
   }
+  const db = window._db;
+  const fsDoc = window._fsDoc;
+  const fsSetDoc = window._fsSetDoc;
+
+  try {
+    // Separar predictions de la info de jugadores
+    const playersInfo = {};
+    const predsData   = {};
+    ['p1','p2','p3','p4'].forEach(id => {
+      playersInfo[id] = { name: state.players[id].name, avatar: state.players[id].avatar };
+      predsData[id]   = state.players[id].predictions || {};
+    });
+
+    // Convertir keys numéricos de results a string (Firestore requiere string como campo)
+    const resultsData = {};
+    Object.keys(state.results).forEach(k => {
+      resultsData[String(k)] = state.results[k];
+    });
+
+    // Guardar en paralelo en las 4 colecciones
+    // IMPORTANTE: predictions se guarda SIN merge para que los borrados se reflejen en Firestore
+    console.log('[FIRESTORE] Guardando estado...', { playersInfo, predsData, resultsData });
+    await Promise.all([
+      fsSetDoc(fsDoc(db, 'players',     'data'),     playersInfo,  { merge: true }),
+      fsSetDoc(fsDoc(db, 'players',     'config'),   { adminPassword: state.adminPassword }, { merge: true }),
+      fsSetDoc(fsDoc(db, 'results',     'data'),     resultsData,  { merge: true }),
+      fsSetDoc(fsDoc(db, 'results',     'knockout'), state.knockoutResults || {}, { merge: true }),
+      fsSetDoc(fsDoc(db, 'predictions', 'data'),     predsData),   // sin merge: borra campos eliminados
+    ]);
+    console.log('[FIRESTORE] Estado guardado correctamente ✓');
+  } catch(e) {
+    console.error('Error guardando en Firestore:', e);
+    showToast('⚠️ Error al guardar en Firestore');
+  }
+}
+
+// ── Listener en tiempo real (actualiza la UI si otro usuario guarda) ──
+function subscribeToFirestore() {
+  const db = window._db;
+  const fsDoc = window._fsDoc;
+  const fsOnSnap = window._fsOnSnap;
+
+  // Escuchar cambios en results
+  fsOnSnap(fsDoc(db, 'results', 'data'), snap => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    state.results = {};
+    Object.keys(data).forEach(k => { state.results[parseInt(k)] = data[k]; });
+    if (currentPlayer) renderAll();
+  });
+
+  // Escuchar cambios en predictions
+  fsOnSnap(fsDoc(db, 'predictions', 'data'), snap => {
+    if (!snap.exists()) return;
+    const predsData = snap.data();
+    console.log('[FIRESTORE] Snapshot de predictions recibido:', predsData);
+    ['p1','p2','p3','p4'].forEach(id => {
+      // Las claves vienen como string desde Firestore — se mantienen como string
+      if (predsData[id] !== undefined) {
+        state.players[id].predictions = predsData[id];
+        console.log(`[FIRESTORE] Predicciones actualizadas para ${id}: ${Object.keys(predsData[id]).length} partidos`);
+      }
+    });
+    if (currentPlayer) renderAll();
+  });
+
+  // Escuchar cambios en players (nombres)
+  fsOnSnap(fsDoc(db, 'players', 'data'), snap => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    ['p1','p2','p3','p4'].forEach(id => {
+      if (data[id]) {
+        state.players[id].name   = data[id].name   || state.players[id].name;
+        state.players[id].avatar = data[id].avatar || state.players[id].avatar;
+      }
+    });
+    renderPlayerSelect();
+    if (currentPlayer) {
+      const ps = state.players[currentPlayer];
+      if (document.getElementById('current-user-name'))
+        document.getElementById('current-user-name').textContent = ps.name;
+    }
+  });
+
+  // Escuchar cambios en knockout
+  fsOnSnap(fsDoc(db, 'results', 'knockout'), snap => {
+    if (!snap.exists()) return;
+    state.knockoutResults = snap.data() || {};
+    if (currentPlayer && currentSection === 'eliminatorias') renderEliminatorias();
+  });
 }
 
 // Dynamic PLAYERS list from state
@@ -1789,7 +2026,7 @@ function renderMatches() {
   Object.keys(groups).sort().forEach(g => {
     html += `<div class="group-title">Grupo ${g}</div><div class="matches-grid">`;
     groups[g].forEach(m => {
-      const pred = ps.predictions[m.id];
+      const pred = ps.predictions[String(m.id)];
       const result = state.results[m.id];
       let cardClass = 'match-card';
       let badge = '';
@@ -1825,9 +2062,9 @@ function renderMatches() {
             <div class="team-name">${m.home}</div>
           </div>
           <div class="score-area">
-            <input type="number" class="score-box" id="pred-${m.id}-h" value="${predH}" min="0" max="20" placeholder="–" onchange="autoSave(${m.id})">
+            <input type="number" class="score-box" id="pred-${m.id}-h" value="${predH}" min="0" max="20" placeholder="–" oninput="autoSave(${m.id})" onchange="autoSave(${m.id})">
             <span class="score-sep">:</span>
-            <input type="number" class="score-box" id="pred-${m.id}-a" value="${predA}" min="0" max="20" placeholder="–" onchange="autoSave(${m.id})">
+            <input type="number" class="score-box" id="pred-${m.id}-a" value="${predA}" min="0" max="20" placeholder="–" oninput="autoSave(${m.id})" onchange="autoSave(${m.id})">
           </div>
           <div class="team">
             <span class="team-flag">${aFlag}</span>
@@ -1875,7 +2112,8 @@ function savePrediction(matchId, silent = false) {
     return;
   }
 
-  state.players[currentPlayer].predictions[matchId] = { home: hNum, away: aNum };
+  state.players[currentPlayer].predictions[String(matchId)] = { home: hNum, away: aNum };
+  console.log(`[SAVE] Predicción guardada — jugador: ${currentPlayer}, partido: ${matchId}, marcador: ${hNum}-${aNum}`);
   saveState();
   if (!silent) showToast('✓ Predicción guardada');
   renderMatches();
@@ -1893,7 +2131,7 @@ function saveAllPredictions() {
     const hNum = parseInt(hVal);
     const aNum = parseInt(aVal);
     if (isNaN(hNum) || isNaN(aNum) || hNum < 0 || aNum < 0) return;
-    state.players[currentPlayer].predictions[m.id] = { home: hNum, away: aNum };
+    state.players[currentPlayer].predictions[String(m.id)] = { home: hNum, away: aNum };
     saved++;
   });
   saveState();
@@ -1902,7 +2140,8 @@ function saveAllPredictions() {
 }
 
 function clearPrediction(matchId) {
-  delete state.players[currentPlayer].predictions[matchId];
+  console.log(`[CLEAR] Borrando predicción — jugador: ${currentPlayer}, partido: ${matchId}`);
+  delete state.players[currentPlayer].predictions[String(matchId)];
   saveState();
   renderMatches();
 }
@@ -1927,7 +2166,8 @@ function calcPoints(playerId) {
   const ps = state.players[playerId];
   let pts = 0;
   Object.keys(ps.predictions).forEach(mid => {
-    const result = state.results[mid];
+    // results usa claves numéricas; predictions usa claves string
+    const result = state.results[parseInt(mid)];
     if (result !== undefined) pts += calcMatchPoints(ps.predictions[mid], result);
   });
   return pts;
@@ -1937,7 +2177,7 @@ function calcDetails(playerId) {
   const ps = state.players[playerId];
   let exact = 0, tendency = 0, wrong = 0, pending = 0;
   Object.keys(ps.predictions).forEach(mid => {
-    const result = state.results[mid];
+    const result = state.results[parseInt(mid)];
     if (result === undefined) { pending++; return; }
     const pts = calcMatchPoints(ps.predictions[mid], result);
     if (pts === 3) exact++;
@@ -2535,6 +2775,260 @@ function renderAdmin() {
   document.getElementById('admin-container').innerHTML = html;
 }
 
+// ═══════════════════════════════════════════
+//  ACTUALIZAR RESULTADOS OFICIALES — TheSportsDB
+// ═══════════════════════════════════════════
+//
+//  ┌──────────────────────────────────────────────────────────┐
+//  │  CONFIGURACIÓN API KEY                                   │
+//  │                                                          │
+//  │  TheSportsDB Free (v1) NO requiere API Key.              │
+//  │  La función usa el endpoint público gratuito:            │
+//  │    https://www.thesportsdb.com/api/v1/json/3/            │
+//  │                                                          │
+//  │  Si tienes suscripción Patreon (v2), cambia la línea:    │
+//  │    const TSDB_API_KEY = "3";   ← cambia "3" por tu key  │
+//  │  Encuéntrala en: https://www.thesportsdb.com/dashboard   │
+//  └──────────────────────────────────────────────────────────┘
+const TSDB_API_KEY = "3"; // "3" = free tier sin key. Reemplaza por tu key Patreon si tienes.
+const TSDB_LEAGUE_ID = "4980"; // FIFA World Cup 2026
+
+// Mapa de nombres en TheSportsDB → nombres en tu app
+const TSDB_TEAM_NAME_MAP = {
+  // Inglés → Español (los nombres de tu app)
+  'Mexico':             'México',
+  'South Africa':       'Sudáfrica',
+  'South Korea':        'Corea del Sur',
+  'Czech Republic':     'República Checa',
+  'Canada':             'Canadá',
+  'Bosnia and Herzegovina': 'Bosnia y Herzegovina',
+  'Qatar':              'Catar',
+  'Switzerland':        'Suiza',
+  'Brazil':             'Brasil',
+  'Morocco':            'Marruecos',
+  'Haiti':              'Haití',
+  'Scotland':           'Escocia',
+  'United States':      'Estados Unidos',
+  'USA':                'Estados Unidos',
+  'Paraguay':           'Paraguay',
+  'Australia':          'Australia',
+  'Turkey':             'Turquía',
+  'Germany':            'Alemania',
+  'Curacao':            'Curazao',
+  "Ivory Coast":        'Costa de Marfil',
+  "Cote d'Ivoire":      'Costa de Marfil',
+  'Ecuador':            'Ecuador',
+  'Netherlands':        'Países Bajos',
+  'Holland':            'Países Bajos',
+  'Japan':              'Japón',
+  'Sweden':             'Suecia',
+  'Tunisia':            'Túnez',
+  'Belgium':            'Bélgica',
+  'Egypt':              'Egipto',
+  'Iran':               'Irán',
+  'New Zealand':        'Nueva Zelanda',
+  'Spain':              'España',
+  'Cape Verde':         'Cabo Verde',
+  'Saudi Arabia':       'Arabia Saudita',
+  'Uruguay':            'Uruguay',
+  'France':             'Francia',
+  'Senegal':            'Senegal',
+  'Iraq':               'Irak',
+  'Norway':             'Noruega',
+  'Argentina':          'Argentina',
+  'Algeria':            'Argelia',
+  'Austria':            'Austria',
+  'Jordan':             'Jordania',
+  'Portugal':           'Portugal',
+  'DR Congo':           'RD Congo',
+  'Congo DR':           'RD Congo',
+  'Uzbekistan':         'Uzbekistán',
+  'Colombia':           'Colombia',
+  'England':            'Inglaterra',
+  'Croatia':            'Croacia',
+  'Ghana':              'Ghana',
+  'Panama':             'Panamá',
+  // Por si ya vienen en español exacto (no hace daño)
+  'México':'México','Sudáfrica':'Sudáfrica','Corea del Sur':'Corea del Sur',
+};
+
+function normalizarNombreEquipo(nombre) {
+  if (!nombre) return nombre;
+  return TSDB_TEAM_NAME_MAP[nombre] || nombre;
+}
+
+// Buscar partido local por equipos normalizados
+function buscarPartidoLocal(homeNorm, awayNorm) {
+  // Intento exacto
+  let m = MATCHES.find(m => m.home === homeNorm && m.away === awayNorm);
+  if (m) return m;
+  // Intento invertido (por si TheSportsDB los lista al revés)
+  m = MATCHES.find(m => m.home === awayNorm && m.away === homeNorm);
+  if (m) return { ...m, _invertido: true };
+  return null;
+}
+
+function logLine(text, tipo = '') {
+  const panel = document.getElementById('update-log-panel');
+  if (!panel) return;
+  const div = document.createElement('div');
+  div.className = 'log-line' + (tipo ? ' log-' + tipo : '');
+  div.textContent = text;
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+async function actualizarResultadosOficiales() {
+  const btn = document.getElementById('btn-actualizar-oficial');
+  const logPanel = document.getElementById('update-log-panel');
+  const summaryPanel = document.getElementById('update-summary-panel');
+
+  // Reset UI
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">🔄</span> Consultando TheSportsDB…';
+  logPanel.innerHTML = '';
+  logPanel.classList.add('visible');
+  summaryPanel.classList.remove('visible');
+  summaryPanel.innerHTML = '';
+
+  let actualizados = 0, sinResultado = 0, noEncontrados = 0, errores = 0;
+
+  try {
+    logLine('📡 Conectando con TheSportsDB…', 'info');
+
+    // TheSportsDB API: buscar eventos de la liga/temporada
+    // Intentamos con el endpoint de búsqueda por liga y temporada 2026
+    const season = '2026';
+    const url = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/eventsseason.php?id=${TSDB_LEAGUE_ID}&s=${season}`;
+
+    logLine(`🔗 URL: ${url}`, 'info');
+
+    let eventos = [];
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      eventos = data.events || [];
+      logLine(`✓ Recibidos ${eventos.length} eventos del torneo`, 'ok');
+    } catch (fetchErr) {
+      // Fallback: intentar con búsqueda por nombre del evento
+      logLine(`⚠️ Endpoint de temporada falló: ${fetchErr.message}`, 'warn');
+      logLine('🔄 Intentando búsqueda alternativa por nombre…', 'info');
+      try {
+        const url2 = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/searchevents.php?e=FIFA+World+Cup+2026`;
+        const resp2 = await fetch(url2);
+        const data2 = await resp2.json();
+        eventos = data2.event || [];
+        logLine(`✓ Búsqueda alternativa: ${eventos.length} eventos`, 'ok');
+      } catch (e2) {
+        throw new Error('No se pudo obtener datos de TheSportsDB. Verifica tu conexión o API Key.');
+      }
+    }
+
+    if (eventos.length === 0) {
+      logLine('⚠️ TheSportsDB no tiene aún resultados para el Mundial 2026.', 'warn');
+      logLine('   Los resultados estarán disponibles cuando comiencen los partidos (11 Jun 2026).', 'warn');
+      summaryPanel.innerHTML = `<strong>Sin datos disponibles aún.</strong> TheSportsDB publicará los resultados cuando los partidos se jueguen. Puedes volver a intentarlo durante o después de cada partido.`;
+      summaryPanel.classList.add('visible');
+      return;
+    }
+
+    // Filtrar solo partidos con resultado (FT = Full Time)
+    const jugados = eventos.filter(e =>
+      e.strStatus === 'Match Finished' ||
+      e.strStatus === 'FT' ||
+      e.intHomeScore !== null && e.intHomeScore !== '' &&
+      e.intAwayScore !== null && e.intAwayScore !== ''
+    );
+
+    logLine(`📊 Partidos con resultado: ${jugados.length} de ${eventos.length}`, 'info');
+
+    if (jugados.length === 0) {
+      logLine('ℹ️ Ningún partido tiene resultado aún. Vuelve a intentarlo después de los primeros partidos.', 'warn');
+      summaryPanel.innerHTML = `<strong>Sin resultados aún.</strong> El torneo aún no ha comenzado o los partidos están pendientes.`;
+      summaryPanel.classList.add('visible');
+      return;
+    }
+
+    // Procesar cada partido con resultado
+    for (const ev of jugados) {
+      const homeRaw = ev.strHomeTeam;
+      const awayRaw = ev.strAwayTeam;
+      const homeNorm = normalizarNombreEquipo(homeRaw);
+      const awayNorm = normalizarNombreEquipo(awayRaw);
+      const homeScore = parseInt(ev.intHomeScore);
+      const awayScore = parseInt(ev.intAwayScore);
+
+      if (isNaN(homeScore) || isNaN(awayScore)) {
+        sinResultado++;
+        continue;
+      }
+
+      const partido = buscarPartidoLocal(homeNorm, awayNorm);
+
+      if (!partido) {
+        noEncontrados++;
+        logLine(`⚠️ No encontrado: "${homeRaw}" vs "${awayRaw}" → normalizado: "${homeNorm}" vs "${awayNorm}"`, 'warn');
+        continue;
+      }
+
+      const matchId = partido.id;
+      let h = homeScore, a = awayScore;
+      if (partido._invertido) { h = awayScore; a = homeScore; }
+
+      const anterior = state.results[matchId];
+      const cambio = !anterior || anterior.home !== h || anterior.away !== a;
+
+      if (cambio) {
+        state.results[matchId] = { home: h, away: a };
+        actualizados++;
+        logLine(`✓ P.${matchId} ${partido.home} ${h}-${a} ${partido.away}`, 'ok');
+      }
+    }
+
+    // Guardar en Firestore si hubo cambios
+    if (actualizados > 0) {
+      logLine(`💾 Guardando ${actualizados} resultado(s) en Firestore…`, 'info');
+      await saveState();
+      logLine('✓ Firestore actualizado', 'ok');
+
+      // Refrescar todas las vistas
+      renderAll();
+      if (currentSection !== 'admin') renderAdmin();
+    }
+
+    // Resumen final
+    const totalLocal = MATCHES.length;
+    const totalConResult = Object.keys(state.results).length;
+    summaryPanel.innerHTML = `
+      <strong>✅ Actualización completada</strong><br>
+      <span style="color:var(--verde)">+${actualizados} resultado(s) nuevos/actualizados</span> ·
+      ${totalConResult} de ${totalLocal} partidos con resultado ·
+      ${noEncontrados > 0 ? `<span style="color:var(--amarillo)">${noEncontrados} sin mapeo</span>` : ''}
+      <br><span style="font-size:0.73rem;color:var(--texto2);margin-top:4px;display:block">
+      Fuente: TheSportsDB · ${new Date().toLocaleString('es-CO', {timeZone:'America/Bogota'})}
+      </span>`;
+    summaryPanel.classList.add('visible');
+
+    if (actualizados === 0) {
+      showToast('ℹ️ Sin cambios — resultados ya estaban al día');
+    } else {
+      showToast(`✓ ${actualizados} resultado(s) actualizados`);
+    }
+
+  } catch (err) {
+    errores++;
+    logLine(`❌ Error: ${err.message}`, 'err');
+    summaryPanel.innerHTML = `<strong style="color:var(--rojo)">❌ Error al actualizar:</strong> ${err.message}`;
+    summaryPanel.classList.add('visible');
+    showToast('❌ Error al consultar TheSportsDB');
+    console.error('[TSDB]', err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔄 Actualizar resultados oficiales';
+  }
+}
+
 function saveResult(matchId) {
   const h = document.getElementById(`res-${matchId}-h`);
   const a = document.getElementById(`res-${matchId}-a`);
@@ -2701,7 +3195,36 @@ function renderAll() {
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
-renderPlayerSelect();
+// ═══════════════════════════════════════════
+//  INIT — espera Firebase, carga Firestore
+// ═══════════════════════════════════════════
+async function initApp() {
+  // Mostrar spinner de carga
+  document.getElementById('player-select-screen').innerHTML = `
+    <div style="text-align:center;padding:80px 20px;color:var(--texto2)">
+      <div style="font-size:3rem;margin-bottom:16px;animation:spin 2s linear infinite">⚽</div>
+      <div style="font-family:'Bebas Neue',cursive;font-size:1.8rem;color:var(--verde);letter-spacing:2px">Conectando…</div>
+      <div style="margin-top:8px;font-size:0.9rem">Cargando datos desde Firestore</div>
+    </div>`;
+
+  await loadStateFromFirestore();
+  subscribeToFirestore();
+
+  // Restaurar pantalla de selección de jugador
+  document.getElementById('player-select-screen').innerHTML = `
+    <h1 class="screen-title">⚽ POLLA MUNDIAL <span style="color:var(--amarillo)">2026</span></h1>
+    <p class="screen-sub">Selecciona tu perfil para continuar</p>
+    <div class="player-grid" id="player-grid"></div>`;
+
+  renderPlayerSelect();
+}
+
+// Esperar a que el módulo de Firebase haya terminado de inicializar
+if (window._firebaseReady) {
+  initApp();
+} else {
+  document.addEventListener('firebase-ready', initApp);
+}
 
 // Keyboard shortcut: Enter saves prediction
 document.addEventListener('keydown', e => {
