@@ -998,6 +998,7 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.78rem;
+    table-layout: fixed;
   }
 
   .grupo-table th {
@@ -1044,6 +1045,13 @@
     gap: 7px;
     font-weight: 600;
     padding-left: 4px;
+    overflow: hidden;
+  }
+
+  .td-team span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .td-team img {
@@ -2206,14 +2214,10 @@ async function loadStateFromFirestore() {
       console.log(`[FIRESTORE] Jugador ${id} — predicciones cargadas: ${Object.keys(preds).length}`);
     });
 
-    // Normalizar keys de results: guardar clave numérica Y string para compatibilidad total
+    // Convertir keys de results a número (Firestore los devuelve como string)
     state.results = {};
     Object.keys(resultsData).forEach(k => {
-      const num = parseInt(k);
-      if (!isNaN(num)) {
-        state.results[num]       = resultsData[k];
-        state.results[String(k)] = resultsData[k];
-      }
+      state.results[parseInt(k)] = resultsData[k];
     });
 
     state.knockoutResults = koData || {};
@@ -2278,13 +2282,7 @@ function subscribeToFirestore() {
     if (!snap.exists()) return;
     const data = snap.data();
     state.results = {};
-    Object.keys(data).forEach(k => {
-      const num = parseInt(k);
-      if (!isNaN(num)) {
-        state.results[num]       = data[k];
-        state.results[String(k)] = data[k];
-      }
-    });
+    Object.keys(data).forEach(k => { state.results[parseInt(k)] = data[k]; });
     if (currentPlayer) renderAll();
   });
 
@@ -2867,9 +2865,7 @@ function calcGroupStandings() {
 
   // Apply results
   MATCHES.forEach(m => {
-    const r = state.results[m.id] !== undefined
-      ? state.results[m.id]
-      : state.results[String(m.id)];
+    const r = state.results[m.id];
     if (r === undefined) return;
     const hData = groups[m.grupo][m.home];
     const aData = groups[m.grupo][m.away];
