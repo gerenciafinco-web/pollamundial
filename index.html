@@ -1192,6 +1192,90 @@
     flex-shrink: 0;
   }
 
+  /* ── BRACKET LEYENDA & TERCEROS ── */
+  .bk-legend {
+    font-size: 0.75rem;
+    color: var(--texto2);
+    padding: 8px 14px;
+    background: var(--fondo2);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .terceros-panel {
+    background: var(--fondo2);
+    border: 1px solid rgba(167,139,250,0.25);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .terceros-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: #a78bfa;
+    margin-bottom: 6px;
+  }
+  .terceros-info {
+    font-size: 0.76rem;
+    color: var(--texto2);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .terceros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .tercero-slot {
+    background: var(--fondo3);
+    border: 1px solid rgba(167,139,250,0.15);
+    border-radius: 9px;
+    padding: 10px 12px;
+  }
+  .tercero-slot-label {
+    font-size: 0.68rem;
+    color: #a78bfa;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+  }
+  .tercero-select {
+    width: 100%;
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    color: var(--texto);
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .tercero-select:focus { border-color: #a78bfa; }
+  .tercero-view {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--texto);
+    min-height: 28px;
+  }
+  .champion-display {
+    text-align: center;
+    padding: 14px 8px;
+    background: rgba(255,214,0,0.08);
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid rgba(255,214,0,0.2);
+  }
+
   /* ── MODAL ── */
   .modal-overlay {
     display: none;
@@ -1948,33 +2032,96 @@ const MATCHES = [
   {id:68, grupo:'L', jornada:3, fecha:'Sáb 28 Jun', hora:'4:00 p.m.',  home:'Croacia',            away:'Ghana'},
 ];
 
-// Bracket structure: 16 Round of 16 matches using group winners (1st) and runners-up (2nd)
-// Pairing: 1A vs 2B, 1C vs 2D, 1E vs 2F, 1G vs 2H, 1I vs 2J, 1K vs 2L, 1B vs 2A, 1D vs 2C,
-//          1F vs 2E, 1H vs 2G, 1J vs 2I, 1L vs 2K ... (standard FIFA-style)
-// FIFA 2026 real format:
-// 12 groups (A-L), 4 teams each = 48 teams total
-// Top 2 from each group = 24 qualified + 8 best 3rd-place teams = 32 in knockouts
-// R16: 16 matches → QF: 8 matches → SF: 4 matches → Final: 1 match
-// The 8 best 3rd-place slots are labeled T1-T8 (best thirds)
-const R16_PAIRINGS = [
-  // Bracket half 1 (matches 1-8)
-  {home:'1A', away:'2B', label:'M1'},
-  {home:'1C', away:'T1', label:'M2'},  // T1 = best 3rd from groups A/B/C/D
-  {home:'1B', away:'T2', label:'M3'},  // T2 = best 3rd from groups A/B/C/D
-  {home:'1D', away:'2C', label:'M4'},
-  {home:'1E', away:'T3', label:'M5'},  // T3 = best 3rd from groups E/F/G/H
-  {home:'1G', away:'2F', label:'M6'},
-  {home:'1F', away:'T4', label:'M7'},  // T4 = best 3rd from groups E/F/G/H
-  {home:'1H', away:'2E', label:'M8'},
-  // Bracket half 2 (matches 9-16)
-  {home:'1I', away:'2J', label:'M9'},
-  {home:'1K', away:'T5', label:'M10'}, // T5 = best 3rd from groups I/J/K/L
-  {home:'1J', away:'T6', label:'M11'}, // T6 = best 3rd from groups I/J/K/L
-  {home:'1L', away:'2K', label:'M12'},
-  {home:'2A', away:'T7', label:'M13'}, // T7 = best 3rd
-  {home:'2D', away:'T8', label:'M14'}, // T8 = best 3rd
-  {home:'2I', away:'2L', label:'M15'},
-  {home:'2G', away:'2H', label:'M16'},
+// ═══════════════════════════════════════════
+//  BRACKET OFICIAL FIFA MUNDIAL 2026
+//  32 equipos: 24 primeros/segundos + 8 mejores terceros
+//  R16(16) → QF(8) → SF(4) → Final(1)
+//
+//  Cruces oficiales del cuadro (referencia imagen):
+//  Top half (bracket izquierdo → SF1):
+//    M1: W74 = 1E vs 3ABCDF
+//    M2: W77 = 1I vs 3CDFGH
+//    M3: W89 = ganW74 vs ganW77   ← QF1
+//    M4: W73 = 2A vs 2B
+//    M5: W75 = 1F vs 2C
+//    M6: W90 = ganW73 vs ganW75   ← QF2
+//    QF → M_SF1: ganQF1 vs ganQF2 ← SF1
+//
+//    M7:  W83 = 2K vs 2L
+//    M8:  W84 = 1H vs 2J
+//    M9:  W93 = ganW83 vs ganW84  ← QF3
+//    M10: W81 = 1D vs 3BEFIJ
+//    M11: W82 = 1G vs 3AEHIJ
+//    M12: W94 = ganW81 vs ganW82  ← QF4
+//    QF → M_SF2: ganQF3 vs ganQF4 ← SF2 (top half)
+//
+//  Bottom half (bracket derecho → SF3+SF4):
+//    M13: W76 = 1C vs 2F
+//    M14: W78 = 1A vs 3CEIJ  (o similar)
+//    M15: W91 = ganW76 vs ganW78  ← QF5
+//    M16: W79 = 1L vs 2I
+//    M17: W80 = 1B vs 2A... revisar
+//    M18: W92 = ganW79 vs ganW80  ← QF6
+//    QF → M_SF3: ganQF5 vs ganQF6 ← SF3
+//
+//    M19: W86 = 1J vs 2H
+//    M20: W88 = 2D vs 2G
+//    M21: W95 = ganW86 vs ganW88  ← QF7
+//    M22: W85 = 1K vs 3EFGIJ
+//    M23: W87 = 1B vs 3DEIJL (*)
+//    M24: W96 = ganW85 vs ganW87  ← QF8
+//    QF → M_SF4: ganQF7 vs ganQF8 ← SF4
+//
+//  FINAL: ganSF1 vs ganSF2 (Semifinal A)
+//         ganSF3 vs ganSF4 (Semifinal B)
+//         → GRAN FINAL
+//
+//  Grupos de terceros disponibles por slot (oficial FIFA):
+//  T_ABCDF: un tercero de A,B,C,D,F
+//  T_CDFGH: un tercero de C,D,F,G,H
+//  T_BEFIJ: un tercero de B,E,F,I,J
+//  T_AEHIJ: un tercero de A,E,H,I,J
+//  T_CEIJ:  un tercero de C,E,I,J
+//  T_EFGIJ: un tercero de E,F,G,I,J
+//  T_DEIJL: un tercero de D,E,I,J,L
+//  T_CEGJL: un tercero de C,E,G,J,L (slot restante)
+// ═══════════════════════════════════════════
+
+// Slots de terceros y los grupos válidos para cada uno
+const TERCEROS_SLOTS = {
+  'T_ABCDF': { label: '3°(A/B/C/D/F)', groups: ['A','B','C','D','F'] },
+  'T_CDFGH': { label: '3°(C/D/F/G/H)', groups: ['C','D','F','G','H'] },
+  'T_BEFIJ': { label: '3°(B/E/F/I/J)', groups: ['B','E','F','I','J'] },
+  'T_AEHIJ': { label: '3°(A/E/H/I/J)', groups: ['A','E','H','I','J'] },
+  'T_CEIJ':  { label: '3°(C/E/I/J)',   groups: ['C','E','I','J']     },
+  'T_EFGIJ': { label: '3°(E/F/G/I/J)', groups: ['E','F','G','I','J'] },
+  'T_DEIJL': { label: '3°(D/E/I/J/L)', groups: ['D','E','I','J','L'] },
+  'T_CEGJL': { label: '3°(C/E/G/J/L)', groups: ['C','E','G','J','L'] },
+};
+
+// Cuadro oficial con 16 partidos de R16
+// home/away: claves de getGroupClassified() → '1A','2B', o slots de terceros 'T_ABCDF'
+const R16_BRACKET = [
+  // ── TOP-LEFT: se alimenta SF1 ──────────────────
+  { id:'r16_0',  home:'1E',    away:'T_ABCDF', label:'M1'  },
+  { id:'r16_1',  home:'1I',    away:'T_CDFGH', label:'M2'  },
+  { id:'r16_2',  home:'2A',    away:'2B',      label:'M3'  },
+  { id:'r16_3',  home:'1F',    away:'2C',      label:'M4'  },
+  // ── TOP-RIGHT: se alimenta SF2 ─────────────────
+  { id:'r16_4',  home:'2K',    away:'2L',      label:'M5'  },
+  { id:'r16_5',  home:'1H',    away:'2J',      label:'M6'  },
+  { id:'r16_6',  home:'1D',    away:'T_BEFIJ', label:'M7'  },
+  { id:'r16_7',  home:'1G',    away:'T_AEHIJ', label:'M8'  },
+  // ── BOTTOM-LEFT: se alimenta SF3 ───────────────
+  { id:'r16_8',  home:'1C',    away:'2F',      label:'M9'  },
+  { id:'r16_9',  home:'1A',    away:'T_CEIJ',  label:'M10' },
+  { id:'r16_10', home:'1L',    away:'2I',      label:'M11' },
+  { id:'r16_11', home:'1B',    away:'2G',      label:'M12' },
+  // ── BOTTOM-RIGHT: se alimenta SF4 ──────────────
+  { id:'r16_12', home:'1J',    away:'2H',      label:'M13' },
+  { id:'r16_13', home:'2D',    away:'2E',      label:'M14' },
+  { id:'r16_14', home:'1K',    away:'T_EFGIJ', label:'M15' },
+  { id:'r16_15', home:'1B',    away:'T_CEGJL', label:'M16' },
 ];
 
 // ═══════════════════════════════════════════
@@ -2796,8 +2943,9 @@ function renderGrupos() {
 }
 
 // ═══════════════════════════════════════════
-//  ELIMINATORIAS / BRACKET
+//  ELIMINATORIAS / BRACKET — FIFA 2026 OFICIAL
 // ═══════════════════════════════════════════
+
 function getGroupClassified() {
   const standings = calcGroupStandings();
   const classified = {};
@@ -2805,227 +2953,31 @@ function getGroupClassified() {
     const teams = standings[g];
     classified[`1${g}`] = teams[0] ? teams[0].team : null;
     classified[`2${g}`] = teams[1] ? teams[1].team : null;
-    classified[`3${g}`] = teams[2] ? teams[2].team : null; // 3rd place
+    classified[`3${g}`] = teams[2] ? teams[2].team : null;
   });
-  // Determine 8 best 3rd-place teams (T1-T8) sorted by pts, dg, gf
-  const thirds = Object.keys(standings).sort().map(g => {
-    const teams = standings[g];
-    return teams[2] ? { ...teams[2], slot: `3${g}` } : null;
-  }).filter(Boolean);
-  thirds.sort((a,b) => {
-    if (b.pts !== a.pts) return b.pts - a.pts;
-    if (b.dg !== a.dg) return b.dg - a.dg;
-    return b.gf - a.gf;
-  });
-  for (let i = 0; i < 8; i++) {
-    classified[`T${i+1}`] = thirds[i] ? thirds[i].team : null;
-  }
   return classified;
 }
 
-function renderEliminatorias() {
+// Devuelve las opciones de tercero para un slot dado
+function getThirdOptions(slotKey) {
+  const slot = TERCEROS_SLOTS[slotKey];
+  if (!slot) return [];
   const classified = getGroupClassified();
-  const ko = state.knockoutResults;
-  const canEdit = adminUnlocked;
+  return slot.groups.map(g => ({
+    key: `3${g}`,
+    team: classified[`3${g}`] || null,
+    label: `3° Grupo ${g}`,
+  }));
+}
 
-  // ── ROUND OF 16 (16 partidos) ──────────────────
-  const r16 = R16_PAIRINGS.map((pair, i) => {
-    const key = `r16_${i}`;
-    return {
-      key,
-      matchNum: pair.label || `M${i+1}`,
-      homeLabel: pair.home,
-      awayLabel: pair.away,
-      homeTeam: classified[pair.home] || null,
-      awayTeam: classified[pair.away] || null,
-      result: ko[key] || null,
-    };
-  });
-
-  // ── CUARTOS (8 partidos): ganadores de R16 pares ──
-  // QF: (M1vsM2), (M3vsM4), (M5vsM6), (M7vsM8), (M9vsM10), (M11vsM12), (M13vsM14), (M15vsM16)
-  const qfPairs = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
-  const qf = qfPairs.map((pair, i) => {
-    const key = `qf_${i}`;
-    return {
-      key,
-      matchNum: `QF${i+1}`,
-      homeLabel: `G${r16[pair[0]].matchNum}`,
-      awayLabel: `G${r16[pair[1]].matchNum}`,
-      homeTeam: getWinner(r16[pair[0]]),
-      awayTeam: getWinner(r16[pair[1]]),
-      result: ko[key] || null,
-    };
-  });
-
-  // ── SEMIFINALES (4 partidos): ganadores de QF pares ──
-  const sfPairs = [[0,1],[2,3],[4,5],[6,7]];
-  const sf = sfPairs.map((pair, i) => {
-    const key = `sf_${i}`;
-    return {
-      key,
-      matchNum: `SF${i+1}`,
-      homeLabel: `G QF${pair[0]+1}`,
-      awayLabel: `G QF${pair[1]+1}`,
-      homeTeam: getWinner(qf[pair[0]]),
-      awayTeam: getWinner(qf[pair[1]]),
-      result: ko[key] || null,
-    };
-  });
-
-  // ── FINAL (1 partido): SF1 vs SF2, SF3 vs SF4 → Final ──
-  // 3rd-place match: SF losers
-  const f1Key = 'final_0';
-  const finalMatch = {
-    key: f1Key,
-    matchNum: 'FINAL',
-    homeLabel: 'G SF1/SF2',
-    awayLabel: 'G SF3/SF4',
-    homeTeam: getWinner(sf[0]) || getWinner(sf[1]),
-    awayTeam: getWinner(sf[2]) || getWinner(sf[3]),
-    result: ko[f1Key] || null,
-  };
-  // Properly: winner of SF1 vs winner of SF3, winner of SF2 vs winner of SF4
-  // (standard bracket: top half vs bottom half)
-  finalMatch.homeTeam = getWinner(sf[0]);
-  finalMatch.awayTeam = getWinner(sf[2]);
-  const semiFinal2 = {
-    key: 'final_sf2',
-    matchNum: 'FINAL',
-    homeLabel: 'G SF2',
-    awayLabel: 'G SF4',
-    homeTeam: getWinner(sf[1]),
-    awayTeam: getWinner(sf[3]),
-    result: ko['final_sf2'] || null,
-  };
-  // Actually we want 1 final. Use winners of SF[0] vs SF[1], and SF[2] vs SF[3]
-  finalMatch.homeTeam = getWinner(sf[0]) || getWinner(sf[1]) ? (getWinner(sf[0]) || null) : null;
-  finalMatch.awayTeam = getWinner(sf[2]) || getWinner(sf[3]) ? (getWinner(sf[2]) || null) : null;
-  // Simplified: Final = winner of (SF0 winner vs SF1 winner) → This needs an extra round
-  // Standard: 4 SF winners → 2 final matches → champion. Use 2 semi-finals → 1 final
-  // With 4 SFs we have: 4 winners → 2 more matches → Grand Final
-  // Let's make it clean: SF1 winner vs SF2 winner = Final1, SF3 winner vs SF4 winner = Final2 → GrandFinal
-  const grandFinalPreMatch1 = {
-    key: 'gf_pre1',
-    matchNum: 'Semifinal A',
-    homeLabel: 'G SF1',
-    awayLabel: 'G SF2',
-    homeTeam: getWinner(sf[0]),
-    awayTeam: getWinner(sf[1]),
-    result: ko['gf_pre1'] || null,
-  };
-  const grandFinalPreMatch2 = {
-    key: 'gf_pre2',
-    matchNum: 'Semifinal B',
-    homeLabel: 'G SF3',
-    awayLabel: 'G SF4',
-    homeTeam: getWinner(sf[2]),
-    awayTeam: getWinner(sf[3]),
-    result: ko['gf_pre2'] || null,
-  };
-  const grandFinal = {
-    key: 'grand_final',
-    matchNum: 'GRAN FINAL',
-    homeLabel: 'G Semi A',
-    awayLabel: 'G Semi B',
-    homeTeam: getWinner(grandFinalPreMatch1),
-    awayTeam: getWinner(grandFinalPreMatch2),
-    result: ko['grand_final'] || null,
-  };
-
-  // ── BUILD HTML ──────────────────────────────────
-  const container = document.getElementById('bracket-container');
-  let html = '';
-
-  // Round of 16 (split into 2 visual columns for readability)
-  const r16a = r16.slice(0, 8);
-  const r16b = r16.slice(8, 16);
-
-  html += `
-  <div class="bracket-section">
-    <div class="bracket-section-title">DIECISEISAVOS DE FINAL</div>
-    <div style="display:flex;gap:0;width:100%">
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">R16 — Grupo A <span style="color:var(--texto2);font-size:0.7rem">(8 partidos)</span></div>
-        <div class="bracket-matches">`;
-  r16a.forEach(m => { html += renderBracketMatch(m, canEdit); });
-  html += `</div></div>
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">R16 — Grupo B <span style="color:var(--texto2);font-size:0.7rem">(8 partidos)</span></div>
-        <div class="bracket-matches">`;
-  r16b.forEach(m => { html += renderBracketMatch(m, canEdit); });
-  html += `</div></div>
-    </div>
-  </div>`;
-
-  // QF (split into 2 groups of 4)
-  const qfa = qf.slice(0,4);
-  const qfb = qf.slice(4,8);
-  html += `
-  <div class="bracket-section">
-    <div class="bracket-section-title">CUARTOS DE FINAL</div>
-    <div style="display:flex;gap:0;width:100%">
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">QF — Grupo A <span style="color:var(--texto2);font-size:0.7rem">(4 partidos)</span></div>
-        <div class="bracket-matches">`;
-  qfa.forEach(m => { html += renderBracketMatch(m, canEdit); });
-  html += `</div></div>
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">QF — Grupo B <span style="color:var(--texto2);font-size:0.7rem">(4 partidos)</span></div>
-        <div class="bracket-matches">`;
-  qfb.forEach(m => { html += renderBracketMatch(m, canEdit); });
-  html += `</div></div>
-    </div>
-  </div>`;
-
-  // SF (4 matches in single row)
-  html += `
-  <div class="bracket-section">
-    <div class="bracket-section-title">SEMIFINALES</div>
-    <div style="display:flex;gap:0;width:100%">`;
-  sf.forEach((m, i) => {
-    html += `<div class="bracket-round" style="flex:1">
-      <div class="bracket-round-title">SF${i+1}</div>
-      <div class="bracket-matches">`;
-    html += renderBracketMatch(m, canEdit);
-    html += `</div></div>`;
-  });
-  html += `</div></div>`;
-
-  // Pre-finals + Grand Final
-  html += `
-  <div class="bracket-section">
-    <div class="bracket-section-title">FINAL</div>
-    <div style="display:flex;gap:0;width:100%">
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">Semifinal A</div>
-        <div class="bracket-matches">`;
-  html += renderBracketMatch(grandFinalPreMatch1, canEdit);
-  html += `</div></div>
-      <div class="bracket-round" style="flex:1.5">
-        <div class="bracket-round-title" style="color:var(--gold);font-size:1.1rem;letter-spacing:3px">🏆 GRAN FINAL 🏆</div>
-        <div class="bracket-matches">`;
-  html += renderBracketMatch(grandFinal, canEdit);
-  const champion = getWinner(grandFinal);
-  if (champion) {
-    html += `<div style="text-align:center;padding:12px 8px;background:rgba(255,214,0,0.08);border-radius:8px;margin-top:8px">
-      <div style="font-size:0.7rem;color:var(--texto2);margin-bottom:4px">🏆 CAMPEÓN DEL MUNDO</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-        ${flagImg(champion, 32, 22)}
-        <span style="font-family:'Bebas Neue',cursive;font-size:1.4rem;color:var(--gold);letter-spacing:2px">${champion}</span>
-      </div>
-    </div>`;
+// Resuelve el equipo para un slot ('1A','2B','T_XXXX')
+function resolveSlot(slot, classified) {
+  if (!slot) return null;
+  if (slot.startsWith('T_')) {
+    const sel = state.knockoutResults[`third_sel_${slot}`];
+    return sel ? (classified[sel] || null) : null;
   }
-  html += `</div></div>
-      <div class="bracket-round" style="flex:1">
-        <div class="bracket-round-title">Semifinal B</div>
-        <div class="bracket-matches">`;
-  html += renderBracketMatch(grandFinalPreMatch2, canEdit);
-  html += `</div></div>
-    </div>
-  </div>`;
-
-  container.innerHTML = html;
+  return classified[slot] || null;
 }
 
 function getWinner(match) {
@@ -3035,43 +2987,252 @@ function getWinner(match) {
   return null;
 }
 
+function buildMatch(id, homeSlot, awaySlot, label, classified) {
+  return {
+    id, homeSlot, awaySlot, label,
+    homeTeam: resolveSlot(homeSlot, classified),
+    awayTeam: resolveSlot(awaySlot, classified),
+    result: state.knockoutResults[id] || null,
+  };
+}
+
+function buildMatchFromWinners(id, label, matchA, matchB) {
+  return {
+    id, label,
+    homeSlot: matchA ? `G ${matchA.label}` : '?',
+    awaySlot: matchB ? `G ${matchB.label}` : '?',
+    homeTeam: getWinner(matchA),
+    awayTeam: getWinner(matchB),
+    result: state.knockoutResults[id] || null,
+  };
+}
+
+function renderEliminatorias() {
+  const classified = getGroupClassified();
+  const canEdit    = adminUnlocked;
+  const container  = document.getElementById('bracket-container');
+
+  // ── R16: 16 partidos ──────────────────────
+  const r16 = R16_BRACKET.map(p =>
+    buildMatch(p.id, p.home, p.away, p.label, classified)
+  );
+
+  // ── Cuartos de final: 8 partidos ──────────
+  // Agrupación: QF1=M1vsM2, QF2=M3vsM4, QF3=M5vsM6, QF4=M7vsM8
+  //             QF5=M9vsM10, QF6=M11vsM12, QF7=M13vsM14, QF8=M15vsM16
+  const QF_PAIRS = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
+  const qf = QF_PAIRS.map(([a,b], i) =>
+    buildMatchFromWinners(`qf_${i}`, `QF${i+1}`, r16[a], r16[b])
+  );
+
+  // ── Semifinales: 4 partidos ────────────────
+  // SF1=QF1vsQF2, SF2=QF3vsQF4, SF3=QF5vsQF6, SF4=QF7vsQF8
+  const SF_PAIRS = [[0,1],[2,3],[4,5],[6,7]];
+  const sf = SF_PAIRS.map(([a,b], i) =>
+    buildMatchFromWinners(`sf_${i}`, `SF${i+1}`, qf[a], qf[b])
+  );
+
+  // ── Finales ────────────────────────────────
+  // Semifinal A: ganador SF1 vs SF2 → Gran Final
+  const sfA = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
+  // Semifinal B: ganador SF3 vs SF4 → Gran Final
+  const sfB = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
+  const grandFinal = buildMatchFromWinners('grand_final', '🏆 FINAL', sfA, sfB);
+  const champion   = getWinner(grandFinal);
+
+  // ── HTML ───────────────────────────────────
+  let html = '';
+
+  // Leyenda
+  html += `<div class="bk-legend">
+    <span style="color:var(--verde);font-weight:700">●</span>&nbsp;1° grupo &nbsp;
+    <span style="color:var(--amarillo);font-weight:700">●</span>&nbsp;2° grupo &nbsp;
+    <span style="color:#a78bfa;font-weight:700">●</span>&nbsp;Mejor 3° &nbsp;
+    <span style="color:var(--texto2);font-size:0.7rem">Cuadro oficial FIFA 2026 — 32 equipos</span>
+  </div>`;
+
+  // Panel de selección de terceros (admin: editable; resto: solo lectura)
+  html += renderThirdSelectors(classified, canEdit);
+
+  // ── Dieciseisavos ──────────────────────────
+  html += buildRoundSection('DIECISEISAVOS DE FINAL', [
+    { title: 'Cuadro Sup. Izq. (M1–M4)',  matches: r16.slice(0, 4)  },
+    { title: 'Cuadro Sup. Der. (M5–M8)',  matches: r16.slice(4, 8)  },
+    { title: 'Cuadro Inf. Izq. (M9–M12)', matches: r16.slice(8, 12) },
+    { title: 'Cuadro Inf. Der. (M13–M16)',matches: r16.slice(12,16) },
+  ], canEdit);
+
+  // ── Cuartos ────────────────────────────────
+  html += buildRoundSection('CUARTOS DE FINAL', [
+    { title: 'QF1 · QF2 — Sup. Izq.', matches: qf.slice(0, 2) },
+    { title: 'QF3 · QF4 — Sup. Der.', matches: qf.slice(2, 4) },
+    { title: 'QF5 · QF6 — Inf. Izq.', matches: qf.slice(4, 6) },
+    { title: 'QF7 · QF8 — Inf. Der.', matches: qf.slice(6, 8) },
+  ], canEdit);
+
+  // ── Semifinales ────────────────────────────
+  html += buildRoundSection('SEMIFINALES', [
+    { title: 'SF1 · Sup. Izq.', matches: [sf[0]] },
+    { title: 'SF2 · Sup. Der.', matches: [sf[1]] },
+    { title: 'SF3 · Inf. Izq.', matches: [sf[2]] },
+    { title: 'SF4 · Inf. Der.', matches: [sf[3]] },
+  ], canEdit);
+
+  // ── Finales ────────────────────────────────
+  html += `<div class="bracket-section">
+    <div class="bracket-section-title" style="color:var(--gold)">🏆 FINALES</div>
+    <div style="display:flex;gap:0;width:100%">
+      <div class="bracket-round" style="flex:1">
+        <div class="bracket-round-title">
+          Semifinal A
+          <span style="display:block;font-size:0.62rem;color:var(--texto2);margin-top:2px">Gan. SF1 vs Gan. SF2</span>
+        </div>
+        <div class="bracket-matches">${renderBracketMatch(sfA, canEdit)}</div>
+      </div>
+      <div class="bracket-round" style="flex:1.5;border:1px solid rgba(255,214,0,0.3);border-radius:12px;margin:4px;background:rgba(255,214,0,0.03)">
+        <div class="bracket-round-title" style="color:var(--gold);font-size:1rem;letter-spacing:3px">🏆 GRAN FINAL 🏆</div>
+        <div class="bracket-matches">
+          ${renderBracketMatch(grandFinal, canEdit)}
+          ${champion ? `<div class="champion-display">
+            <div style="font-size:0.7rem;color:var(--texto2);margin-bottom:6px">🏆 CAMPEÓN DEL MUNDO</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+              ${flagImg(champion, 48, 32)}
+              <span style="font-family:'Bebas Neue',cursive;font-size:1.8rem;color:var(--gold);letter-spacing:2px">${champion}</span>
+            </div>
+          </div>` : ''}
+        </div>
+      </div>
+      <div class="bracket-round" style="flex:1">
+        <div class="bracket-round-title">
+          Semifinal B
+          <span style="display:block;font-size:0.62rem;color:var(--texto2);margin-top:2px">Gan. SF3 vs Gan. SF4</span>
+        </div>
+        <div class="bracket-matches">${renderBracketMatch(sfB, canEdit)}</div>
+      </div>
+    </div>
+  </div>`;
+
+  container.innerHTML = html;
+}
+
+function buildRoundSection(title, columns, canEdit) {
+  let html = `<div class="bracket-section">
+    <div class="bracket-section-title">${title}</div>
+    <div style="display:flex;gap:0;width:100%">`;
+  columns.forEach(col => {
+    html += `<div class="bracket-round" style="flex:1">
+      <div class="bracket-round-title">${col.title}</div>
+      <div class="bracket-matches">`;
+    col.matches.forEach(m => { html += renderBracketMatch(m, canEdit); });
+    html += `</div></div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+
+// Panel de terceros: admin ve selectores, demás ven solo lectura
+function renderThirdSelectors(classified, canEdit) {
+  const entries = Object.entries(TERCEROS_SLOTS);
+  let html = `<div class="terceros-panel">
+    <div class="terceros-title">🔢 Mejores Terceros Clasificados</div>
+    <div class="terceros-info">
+      Asigna qué grupo ocupa cada slot de mejor tercero según la tabla FIFA.
+      ${canEdit ? 'Solo el administrador puede modificar.' : 'Vista de solo lectura.'}
+    </div>
+    <div class="terceros-grid">`;
+
+  entries.forEach(([slotKey, slotInfo]) => {
+    const manualKey = `third_sel_${slotKey}`;
+    const currentSel = state.knockoutResults[manualKey] || '';
+    const options    = getThirdOptions(slotKey);
+    const selTeam    = currentSel ? (classified[currentSel] || null) : null;
+
+    html += `<div class="tercero-slot">
+      <div class="tercero-slot-label">${slotInfo.label}</div>`;
+
+    if (canEdit) {
+      html += `<select class="tercero-select" onchange="saveThirdSelection('${slotKey}', this.value)">
+        <option value="">— Pendiente —</option>`;
+      options.forEach(opt => {
+        const disp = opt.team ? `${opt.label} — ${opt.team}` : `${opt.label}`;
+        html += `<option value="${opt.key}" ${currentSel === opt.key ? 'selected' : ''}>${disp}</option>`;
+      });
+      html += `</select>`;
+    } else {
+      html += `<div class="tercero-view">
+        ${selTeam ? flagImg(selTeam, 20, 14) : ''}
+        <span>${selTeam || '<em style="color:var(--texto2);font-style:italic;font-weight:400">Pendiente</em>'}</span>
+      </div>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `</div></div>`;
+  return html;
+}
+
+function saveThirdSelection(slotKey, value) {
+  const manualKey = `third_sel_${slotKey}`;
+  if (value) {
+    state.knockoutResults[manualKey] = value;
+  } else {
+    delete state.knockoutResults[manualKey];
+  }
+  saveState();
+  showToast('✓ Tercero asignado');
+  renderEliminatorias();
+}
+
 function renderBracketMatch(m, canEdit) {
-  const homeName = m.homeTeam || (m.homeLabel ? m.homeLabel : '?');
-  const awayName = m.awayTeam || (m.awayLabel ? m.awayLabel : '?');
-  const hFlag = m.homeTeam ? flagImg(m.homeTeam, 20, 14) : `<span style="font-size:14px;opacity:0.4">❓</span>`;
-  const aFlag = m.awayTeam ? flagImg(m.awayTeam, 20, 14) : `<span style="font-size:14px;opacity:0.4">❓</span>`;
-  const res = m.result;
-  const hWin = res && res.winner === 'home';
-  const aWin = res && res.winner === 'away';
+  const homeName = m.homeTeam || m.homeSlot || '?';
+  const awayName = m.awayTeam || m.awaySlot || '?';
+  const hFlag = m.homeTeam
+    ? flagImg(m.homeTeam, 20, 14)
+    : `<span style="font-size:11px;opacity:0.3;flex-shrink:0;width:20px;display:inline-block"></span>`;
+  const aFlag = m.awayTeam
+    ? flagImg(m.awayTeam, 20, 14)
+    : `<span style="font-size:11px;opacity:0.3;flex-shrink:0;width:20px;display:inline-block"></span>`;
+  const res     = m.result;
+  const hWin    = res && res.winner === 'home';
+  const aWin    = res && res.winner === 'away';
   const pending = !m.homeTeam || !m.awayTeam;
+
+  // Color especial para slots de tercero sin resolver
+  const hColor = (!m.homeTeam && m.homeSlot && m.homeSlot.startsWith('T_')) ? 'color:#a78bfa' : '';
+  const aColor = (!m.awayTeam && m.awaySlot && m.awaySlot.startsWith('T_')) ? 'color:#a78bfa' : '';
+
+  const matchLabel = m.label
+    ? `<div style="font-size:0.6rem;color:var(--texto2);padding:2px 8px 2px;border-bottom:1px solid rgba(255,255,255,0.04);letter-spacing:1px">${m.label}</div>`
+    : '';
 
   let editBtn = '';
   if (canEdit && m.homeTeam && m.awayTeam) {
     editBtn = `<div style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.15)">
       <div style="display:flex;gap:4px;align-items:center;font-size:0.68rem">
-        <input type="number" id="ko-${m.key}-h" value="${res ? res.home : ''}" min="0" max="20" placeholder="–"
+        <input type="number" id="ko-${m.id}-h" value="${res ? res.home : ''}" min="0" max="20" placeholder="–"
           style="width:34px;height:26px;background:var(--fondo3);border:1px solid var(--borde);border-radius:4px;text-align:center;color:var(--texto);font-size:0.82rem;outline:none;-moz-appearance:textfield">
         <span style="color:var(--texto2)">:</span>
-        <input type="number" id="ko-${m.key}-a" value="${res ? res.away : ''}" min="0" max="20" placeholder="–"
+        <input type="number" id="ko-${m.id}-a" value="${res ? res.away : ''}" min="0" max="20" placeholder="–"
           style="width:34px;height:26px;background:var(--fondo3);border:1px solid var(--borde);border-radius:4px;text-align:center;color:var(--texto);font-size:0.82rem;outline:none;-moz-appearance:textfield">
-        <select id="ko-${m.key}-w" style="flex:1;background:var(--fondo3);border:1px solid var(--borde);border-radius:4px;color:var(--texto);font-size:0.68rem;padding:2px 4px;outline:none">
+        <select id="ko-${m.id}-w" style="flex:1;background:var(--fondo3);border:1px solid var(--borde);border-radius:4px;color:var(--texto);font-size:0.68rem;padding:2px 4px;outline:none">
           <option value="">Ganador</option>
           <option value="home" ${res&&res.winner==='home'?'selected':''}>Local</option>
           <option value="away" ${res&&res.winner==='away'?'selected':''}>Visitante</option>
         </select>
-        <button onclick="saveKOResult('${m.key}')"
+        <button onclick="saveKOResult('${m.id}')"
           style="padding:3px 8px;background:var(--amarillo);color:#000;border:none;border-radius:4px;font-size:0.68rem;font-weight:700;cursor:pointer;white-space:nowrap">✓</button>
       </div>
     </div>`;
   }
 
   return `<div class="bracket-match ${pending ? 'bracket-pending' : ''}">
-    <div class="bracket-team ${hWin ? 'winner' : ''} ${!m.homeTeam ? 'tbd' : ''}">
+    ${matchLabel}
+    <div class="bracket-team ${hWin ? 'winner' : ''} ${!m.homeTeam ? 'tbd' : ''}" style="${hColor}">
       ${hFlag}
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${homeName}</span>
       ${res ? `<span class="bracket-score">${res.home}</span>` : ''}
     </div>
-    <div class="bracket-team ${aWin ? 'winner' : ''} ${!m.awayTeam ? 'tbd' : ''}">
+    <div class="bracket-team ${aWin ? 'winner' : ''} ${!m.awayTeam ? 'tbd' : ''}" style="${aColor}">
       ${aFlag}
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${awayName}</span>
       ${res ? `<span class="bracket-score">${res.away}</span>` : ''}
