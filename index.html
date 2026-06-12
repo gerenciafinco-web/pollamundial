@@ -1086,174 +1086,6 @@
     font-size: 0.72rem;
   }
 
-
-  /* ── VISTA DE LLAVES ── */
-  .llaves-toggle-bar {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 20px;
-    background: var(--fondo2);
-    border: 1px solid var(--borde);
-    border-radius: 10px;
-    padding: 4px;
-    width: fit-content;
-  }
-  .llaves-toggle-btn {
-    padding: 7px 18px;
-    border: none;
-    background: transparent;
-    color: var(--texto2);
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: 7px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-  }
-  .llaves-toggle-btn.active {
-    background: var(--verde);
-    color: #000;
-  }
-  .llaves-toggle-btn:hover:not(.active) {
-    background: var(--fondo3);
-    color: var(--texto);
-  }
-  .llaves-wrapper {
-    overflow-x: auto;
-    padding-bottom: 16px;
-  }
-  .llaves-bracket {
-    display: grid;
-    grid-template-columns:
-      170px 130px 110px 100px 110px 130px 170px;
-    grid-template-rows: auto;
-    gap: 0;
-    min-width: 930px;
-    position: relative;
-    align-items: center;
-    padding: 12px 0;
-  }
-  .llaves-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    align-items: center;
-    position: relative;
-  }
-  .llaves-col-title {
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--texto2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-    padding: 0 4px 10px;
-    white-space: nowrap;
-  }
-  .llaves-slot {
-    width: 100%;
-    padding: 0 4px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .llaves-match {
-    background: var(--fondo3);
-    border: 1px solid var(--borde);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: 0.67rem;
-    width: 100%;
-    transition: border-color 0.2s;
-  }
-  .llaves-match:hover { border-color: rgba(0,200,83,0.4); }
-  .llaves-match.lm-pending { opacity: 0.55; }
-  .llaves-team {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 7px;
-    min-height: 26px;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .llaves-team:last-of-type { border-bottom: none; }
-  .llaves-team.lm-winner {
-    background: rgba(0,200,83,0.12);
-    color: var(--verde);
-  }
-  .llaves-team.lm-tbd {
-    color: var(--texto2);
-    font-style: italic;
-    font-weight: 400;
-    opacity: 0.7;
-  }
-  .llaves-team-name {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .llaves-score {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-    color: var(--texto2);
-  }
-  .llaves-score.lm-winner { color: var(--verde); }
-  .llaves-round-label {
-    font-size: 0.55rem;
-    color: var(--texto2);
-    text-align: center;
-    padding: 2px 6px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .llaves-spacer { flex-shrink: 0; }
-  .llaves-connector {
-    position: absolute;
-    pointer-events: none;
-  }
-  .llaves-final-box {
-    background: var(--fondo2);
-    border: 2px solid var(--amarillo);
-    border-radius: 12px;
-    padding: 10px 8px 8px;
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .llaves-final-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 0.9rem;
-    color: var(--amarillo);
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-  }
-  .llaves-champion {
-    margin-top: 8px;
-    padding: 6px 8px;
-    background: rgba(255,214,0,0.08);
-    border-radius: 6px;
-    border: 1px solid rgba(255,214,0,0.2);
-    font-size: 0.65rem;
-    color: var(--texto2);
-  }
-  .llaves-champion strong {
-    display: block;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1rem;
-    color: var(--amarillo);
-    letter-spacing: 1px;
-    margin-top: 2px;
-  }
-
   /* ── ELIMINATORIAS / BRACKET ── */
   .bracket-wrapper {
     overflow-x: auto;
@@ -1938,19 +1770,8 @@
       <h2>Eliminatorias</h2>
       <span class="info-pill">Bracket automático</span>
     </div>
-    <div class="llaves-toggle-bar">
-      <button class="llaves-toggle-btn active" id="btn-vista-lista" onclick="switchVistaEliminatorias('lista')">📋 Lista</button>
-      <button class="llaves-toggle-btn" id="btn-vista-llaves" onclick="switchVistaEliminatorias('llaves')">🏆 Llaves</button>
-    </div>
-    <div id="elim-vista-lista">
-      <div class="bracket-wrapper">
-        <div class="bracket" id="bracket-container"></div>
-      </div>
-    </div>
-    <div id="elim-vista-llaves" style="display:none">
-      <div class="llaves-wrapper">
-        <div id="llaves-container"></div>
-      </div>
+    <div class="bracket-wrapper">
+      <div class="bracket" id="bracket-container"></div>
     </div>
   </div>
 
@@ -3036,7 +2857,8 @@ function calcGroupStandings() {
 
   // Apply results
   MATCHES.forEach(m => {
-    const r = state.results[m.id];
+    // Firestore puede guardar claves como string; buscar ambas formas
+    const r = state.results[m.id] !== undefined ? state.results[m.id] : state.results[String(m.id)];
     if (r === undefined) return;
     const hData = groups[m.grupo][m.home];
     const aData = groups[m.grupo][m.away];
@@ -3302,8 +3124,6 @@ function renderEliminatorias() {
   </div>`;
 
   container.innerHTML = html;
-  // Si la vista de llaves está activa, refrescarla también
-  if (_vistaEliminatorias === 'llaves') renderLlaves();
 }
 
 function buildRoundSection(title, columns, canEdit) {
@@ -3431,130 +3251,6 @@ function renderBracketMatch(m, canEdit) {
     ${editBtn}
   </div>`;
 }
-
-
-// ═══════════════════════════════════════════
-//  VISTA DE LLAVES
-// ═══════════════════════════════════════════
-let _vistaEliminatorias = 'lista';
-
-function switchVistaEliminatorias(vista) {
-  _vistaEliminatorias = vista;
-  document.getElementById('elim-vista-lista').style.display  = vista === 'lista'  ? '' : 'none';
-  document.getElementById('elim-vista-llaves').style.display = vista === 'llaves' ? '' : 'none';
-  document.getElementById('btn-vista-lista').classList.toggle('active',  vista === 'lista');
-  document.getElementById('btn-vista-llaves').classList.toggle('active', vista === 'llaves');
-  if (vista === 'llaves') renderLlaves();
-}
-
-function llavesMatchHTML(m) {
-  if (!m) return '<div class="llaves-match lm-pending"><div class="llaves-team lm-tbd"><span class="llaves-team-name">TBD</span></div><div class="llaves-team lm-tbd"><span class="llaves-team-name">TBD</span></div></div>';
-  const homeName = m.homeTeam || m.homeSlot || '?';
-  const awayName = m.awayTeam || m.awaySlot || '?';
-  const res      = m.result;
-  const hWin     = res && res.winner === 'home';
-  const aWin     = res && res.winner === 'away';
-  const pending  = !m.homeTeam || !m.awayTeam;
-  const hFlag    = m.homeTeam ? flagImg(m.homeTeam, 16, 11) : '';
-  const aFlag    = m.awayTeam ? flagImg(m.awayTeam, 16, 11) : '';
-  const hTbd     = !m.homeTeam ? ' lm-tbd' : '';
-  const aTbd     = !m.awayTeam ? ' lm-tbd' : '';
-  const hScoreHTML = res ? `<span class="llaves-score${hWin?' lm-winner':''}">${res.home}</span>` : '';
-  const aScoreHTML = res ? `<span class="llaves-score${aWin?' lm-winner':''}">${res.away}</span>` : '';
-  const label = m.label ? `<div class="llaves-round-label">${m.label}</div>` : '';
-  return `<div class="llaves-match${pending?' lm-pending':''}">
-    ${label}
-    <div class="llaves-team${hWin?' lm-winner':''}${hTbd}">
-      ${hFlag}<span class="llaves-team-name">${homeName}</span>${hScoreHTML}
-    </div>
-    <div class="llaves-team${aWin?' lm-winner':''}${aTbd}">
-      ${aFlag}<span class="llaves-team-name">${awayName}</span>${aScoreHTML}
-    </div>
-  </div>`;
-}
-
-function renderLlaves() {
-  const classified = getGroupClassified();
-  const container  = document.getElementById('llaves-container');
-
-  // Reconstruir árbol (igual que renderEliminatorias)
-  const r16 = R16_BRACKET.map(p => buildMatch(p.id, p.home, p.away, p.label, classified));
-  const QF_PAIRS = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
-  const qf = QF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`qf_${i}`, `QF${i+1}`, r16[a], r16[b]));
-  const SF_PAIRS = [[0,1],[2,3],[4,5],[6,7]];
-  const sf = SF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`sf_${i}`, `SF${i+1}`, qf[a], qf[b]));
-  const sfA       = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
-  const sfB       = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
-  const grandFinal= buildMatchFromWinners('grand_final','🏆 FINAL', sfA, sfB);
-  const champion  = getWinner(grandFinal);
-
-  // ── Disposición: cuadro izquierdo (M1–M8) y derecho (M9–M16) ──
-  // Imagen de referencia:
-  //   Col 0: R16 izquierda (M1-M4 arriba, M5-M8 abajo)  — 8 partidos = r16[0..7]
-  //   Col 1: QF izquierda  (QF1-QF4)                    — 4 partidos = qf[0..3]
-  //   Col 2: SF izquierda  (SF1, SF2)                   — 2 partidos = sf[0..1]
-  //   Col 3: FINAL                                       — sfA + grandFinal + sfB
-  //   Col 4: SF derecha    (SF3, SF4)                   — 2 partidos = sf[2..3]
-  //   Col 5: QF derecha    (QF5-QF8)                    — 4 partidos = qf[4..7]
-  //   Col 6: R16 derecha   (M9-M12 arriba, M13-M16 abajo) — r16[8..15]
-
-  // Función para crear una columna de partidos con espaciado proporcional
-  function colHTML(title, matches, cellHeight) {
-    const n = matches.length;
-    // Espacio total de las 8 celdas base (referencia de la col con 8 matches)
-    const BASE = 8;
-    const spacing = (BASE / n); // cuántas celdas-base ocupa cada slot
-    let html = `<div class="llaves-col">
-      <div class="llaves-col-title">${title}</div>`;
-    matches.forEach((m, i) => {
-      // padding-top para centrar cada partido en su espacio
-      const padTop = i === 0 ? Math.round((spacing - 1) * cellHeight / 2) : Math.round((spacing - 1) * cellHeight);
-      html += `<div class="llaves-slot" style="padding-top:${padTop}px;padding-bottom:${i === n-1 ? 0 : 0}px">
-        ${llavesMatchHTML(m)}
-      </div>`;
-    });
-    html += `</div>`;
-    return html;
-  }
-
-  const CH = 52; // altura aprox. de un partido en px
-
-  // ── Columna central: sfA, grandFinal, sfB ──
-  const finalColHTML = `<div class="llaves-col">
-    <div class="llaves-col-title" style="color:var(--amarillo)">🏆 Final</div>
-    <div class="llaves-slot" style="padding-top:${CH}px">
-      ${llavesMatchHTML(sfA)}
-    </div>
-    <div class="llaves-slot" style="padding-top:${CH}px">
-      <div class="llaves-final-box">
-        <div class="llaves-final-title">🏆 GRAN FINAL</div>
-        ${llavesMatchHTML(grandFinal)}
-        ${champion ? `<div class="llaves-champion">🏆 Campeón del Mundo<strong>${champion}</strong></div>` : ''}
-      </div>
-    </div>
-    <div class="llaves-slot" style="padding-top:${CH}px">
-      ${llavesMatchHTML(sfB)}
-    </div>
-  </div>`;
-
-  container.innerHTML = `
-    <div style="background:var(--fondo2);border:1px solid var(--borde);border-radius:14px;overflow:hidden;padding:16px 8px 20px">
-      <div style="font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:2px;color:var(--amarillo);padding:0 8px 14px;border-bottom:1px solid var(--borde);margin-bottom:16px">
-        🏆 CUADRO OFICIAL FIFA MUNDIAL 2026
-        <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--texto2);font-weight:400;letter-spacing:0;margin-left:10px">Vista de solo lectura · 32 equipos</span>
-      </div>
-      <div class="llaves-bracket">
-        ${colHTML('Dieciseisavos', r16.slice(0,8), CH)}
-        ${colHTML('Cuartos', qf.slice(0,4), CH)}
-        ${colHTML('Semifinal', sf.slice(0,2), CH)}
-        ${finalColHTML}
-        ${colHTML('Semifinal', sf.slice(2,4), CH)}
-        ${colHTML('Cuartos', qf.slice(4,8), CH)}
-        ${colHTML('Dieciseisavos', r16.slice(8,16), CH)}
-      </div>
-    </div>`;
-}
-
 
 function saveKOResult(key) {
   const hEl = document.getElementById(`ko-${key}-h`);
