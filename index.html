@@ -2860,18 +2860,15 @@ function calcGroupStandings() {
     // Firestore puede guardar claves como string; buscar ambas formas
     const r = state.results[m.id] !== undefined ? state.results[m.id] : state.results[String(m.id)];
     if (r === undefined) return;
-    const rh = Number(r.home);
-    const ra = Number(r.away);
-    if (isNaN(rh) || isNaN(ra)) return;
     const hData = groups[m.grupo][m.home];
     const aData = groups[m.grupo][m.away];
     hData.pj++; aData.pj++;
-    hData.gf += rh; hData.gc += ra;
-    aData.gf += ra; aData.gc += rh;
+    hData.gf += r.home; hData.gc += r.away;
+    aData.gf += r.away; aData.gc += r.home;
     hData.dg = hData.gf - hData.gc;
     aData.dg = aData.gf - aData.gc;
-    if (rh > ra) { hData.pg++; hData.pts+=3; aData.pp++; }
-    else if (ra > rh) { aData.pg++; aData.pts+=3; hData.pp++; }
+    if (r.home > r.away) { hData.pg++; hData.pts+=3; aData.pp++; }
+    else if (r.away > r.home) { aData.pg++; aData.pts+=3; hData.pp++; }
     else { hData.pe++; aData.pe++; hData.pts++; aData.pts++; }
   });
 
