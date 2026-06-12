@@ -2272,9 +2272,14 @@ function subscribeToFirestore() {
   // Escuchar cambios en results
   fsOnSnap(fsDoc(db, 'results', 'data'), snap => {
     if (!snap.exists()) return;
+    // fromCache: true significa que es el snapshot local inmediato tras nuestro propio setDoc,
+    // no un cambio externo — lo ignoramos para no pisar lo que el admin acaba de ingresar.
+    if (snap.metadata && snap.metadata.fromCache) return;
     const data = snap.data();
-    state.results = {};
-    Object.keys(data).forEach(k => { state.results[parseInt(k)] = data[k]; });
+    const incoming = {};
+    Object.keys(data).forEach(k => { incoming[parseInt(k)] = data[k]; });
+    // Merge: mantener resultados locales recientes, agregar los que vienen del servidor
+    state.results = Object.assign({}, incoming, state.results);
     if (currentPlayer) renderAll();
   });
 
@@ -3603,7 +3608,7 @@ async function actualizarResultadosOficiales() {
   }
 }
 
-function saveResult(matchId) {
+async function saveResult(matchId) {
   const h = document.getElementById(`res-${matchId}-h`);
   const a = document.getElementById(`res-${matchId}-a`);
   if (!h || !a || h.value.trim() === '' || a.value.trim() === '') {
@@ -3613,11 +3618,19 @@ function saveResult(matchId) {
   const hNum = parseInt(h.value);
   const aNum = parseInt(a.value);
   if (isNaN(hNum) || isNaN(aNum)) { showToast('⚠️ Valores inválidos'); return; }
+
+  // Guardar localmente primero para UI inmediata
   state.results[matchId] = { home: hNum, away: aNum };
-  saveState();
-  showToast('✓ Resultado guardado');
   renderAdmin();
   if (currentSection === 'tabla') renderLeaderboard();
+
+  // Persistir en Firestore y esperar confirmación
+  try {
+    await saveState();
+    showToast('✓ Resultado guardado');
+  } catch(e) {
+    showToast('⚠️ Error al guardar en Firestore');
+  }
 }
 
 // ═══════════════════════════════════════════
