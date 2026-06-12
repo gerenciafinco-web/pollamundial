@@ -2270,17 +2270,11 @@ function subscribeToFirestore() {
   const fsOnSnap = window._fsOnSnap;
 
   // Escuchar cambios en results
-  let _ignoreNextResultsSnap = false;
   fsOnSnap(fsDoc(db, 'results', 'data'), snap => {
     if (!snap.exists()) return;
-    // Ignorar el echo local inmediato de nuestro propio setDoc (fromCache o hasPendingWrites)
-    if (snap.metadata && (snap.metadata.fromCache || snap.metadata.hasPendingWrites)) return;
     const data = snap.data();
-    const incoming = {};
-    Object.keys(data).forEach(k => { incoming[parseInt(k)] = data[k]; });
-    // Merge: el servidor es la fuente de verdad, pero preservamos claves locales recientes
-    // que aún no se han confirmado en Firestore
-    state.results = Object.assign({}, state.results, incoming);
+    state.results = {};
+    Object.keys(data).forEach(k => { state.results[parseInt(k)] = data[k]; });
     if (currentPlayer) renderAll();
   });
 
@@ -2863,7 +2857,8 @@ function calcGroupStandings() {
 
   // Apply results
   MATCHES.forEach(m => {
-    const r = state.results[m.id];
+    // Firestore puede guardar claves como string; buscar ambas formas
+    const r = state.results[m.id] !== undefined ? state.results[m.id] : state.results[String(m.id)];
     if (r === undefined) return;
     const hData = groups[m.grupo][m.home];
     const aData = groups[m.grupo][m.away];
@@ -3609,7 +3604,7 @@ async function actualizarResultadosOficiales() {
   }
 }
 
-async function saveResult(matchId) {
+function saveResult(matchId) {
   const h = document.getElementById(`res-${matchId}-h`);
   const a = document.getElementById(`res-${matchId}-a`);
   if (!h || !a || h.value.trim() === '' || a.value.trim() === '') {
@@ -3619,18 +3614,11 @@ async function saveResult(matchId) {
   const hNum = parseInt(h.value);
   const aNum = parseInt(a.value);
   if (isNaN(hNum) || isNaN(aNum)) { showToast('⚠️ Valores inválidos'); return; }
-  // Guardar localmente primero para UI inmediata
   state.results[matchId] = { home: hNum, away: aNum };
+  saveState();
+  showToast('✓ Resultado guardado');
   renderAdmin();
   if (currentSection === 'tabla') renderLeaderboard();
-  if (currentSection === 'grupos') renderGrupos();
-  // Persistir en Firestore esperando confirmación
-  try {
-    await saveState();
-    showToast('✓ Resultado guardado');
-  } catch(e) {
-    showToast('⚠️ Error al guardar en Firestore');
-  }
 }
 
 // ═══════════════════════════════════════════
