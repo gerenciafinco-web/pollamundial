@@ -2270,16 +2270,17 @@ function subscribeToFirestore() {
   const fsOnSnap = window._fsOnSnap;
 
   // Escuchar cambios en results
+  let _ignoreNextResultsSnap = false;
   fsOnSnap(fsDoc(db, 'results', 'data'), snap => {
     if (!snap.exists()) return;
-    // fromCache: true significa que es el snapshot local inmediato tras nuestro propio setDoc,
-    // no un cambio externo — lo ignoramos para no pisar lo que el admin acaba de ingresar.
-    if (snap.metadata && snap.metadata.fromCache) return;
+    // Ignorar el echo local inmediato de nuestro propio setDoc (fromCache o hasPendingWrites)
+    if (snap.metadata && (snap.metadata.fromCache || snap.metadata.hasPendingWrites)) return;
     const data = snap.data();
     const incoming = {};
     Object.keys(data).forEach(k => { incoming[parseInt(k)] = data[k]; });
-    // Merge: mantener resultados locales recientes, agregar los que vienen del servidor
-    state.results = Object.assign({}, incoming, state.results);
+    // Merge: el servidor es la fuente de verdad, pero preservamos claves locales recientes
+    // que aún no se han confirmado en Firestore
+    state.results = Object.assign({}, state.results, incoming);
     if (currentPlayer) renderAll();
   });
 
@@ -3618,13 +3619,12 @@ async function saveResult(matchId) {
   const hNum = parseInt(h.value);
   const aNum = parseInt(a.value);
   if (isNaN(hNum) || isNaN(aNum)) { showToast('⚠️ Valores inválidos'); return; }
-
   // Guardar localmente primero para UI inmediata
   state.results[matchId] = { home: hNum, away: aNum };
   renderAdmin();
   if (currentSection === 'tabla') renderLeaderboard();
-
-  // Persistir en Firestore y esperar confirmación
+  if (currentSection === 'grupos') renderGrupos();
+  // Persistir en Firestore esperando confirmación
   try {
     await saveState();
     showToast('✓ Resultado guardado');
