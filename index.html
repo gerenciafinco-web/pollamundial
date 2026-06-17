@@ -48,33 +48,30 @@
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap');
 
   :root {
-    /* ── Identidad visual oficial FIFA World Cup 26™ ── */
-    --azul: #4D8AFF;
-    --azul-dark: #2F66E0;
-    --morado: #A78BFA;
-    --morado-deep: #7C3AED;
-    --turquesa: #14C9B4;
-    --naranja: #FF6A2B;
-    --naranja-dark: #E6501A;
-    --lima: #9FE000;
-    --lima-dark: #7CB300;
-
-    --verde: #14C9B4;
-    --verde-dark: #0CA391;
-    --rojo: #FF3B4E;
-    --amarillo: #FFD600;
-    --fondo: #161B3D;
-    --fondo2: #1F2550;
-    --fondo3: #2A3169;
-    --borde: rgba(255,255,255,0.10);
-    --texto: #EDEFF7;
-    --texto2: #9AA8CC;
-    --gold: #FFD600;
+    /* FIFA World Cup 2026 Official Palette */
+    --verde: #00C5A2;        /* Teal/Cyan from WC26 palette */
+    --verde-dark: #009e82;
+    --rojo: #E8002D;         /* WC26 vivid red */
+    --amarillo: #FFE600;     /* WC26 electric yellow */
+    --azul: #4B6FFF;         /* WC26 blue-purple accent */
+    --morado: #7B3FF2;       /* WC26 violet */
+    --naranja: #FF5C00;      /* WC26 orange */
+    --fondo: #0D0D0D;        /* Near-black, WC26 dark base */
+    --fondo2: #141414;
+    --fondo3: #1E1E1E;
+    --borde: rgba(255,255,255,0.09);
+    --texto: #F0F0F0;
+    --texto2: #888888;
+    --gold: #FFE600;
     --silver: #C0C0C0;
     --bronze: #CD7F32;
+    /* WC26 gradient accent */
+    --grad-primary: linear-gradient(135deg, #E8002D 0%, #7B3FF2 50%, #00C5A2 100%);
+    --grad-header: linear-gradient(135deg, #0D0D0D 0%, #1a0a24 40%, #0a1a14 100%);
+    --grad-card: linear-gradient(135deg, #1E1E1E 0%, #181824 100%);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,14 +86,14 @@
 
   /* ── HEADER ── */
   header {
-    background: linear-gradient(135deg, var(--fondo) 0%, #232B66 50%, var(--fondo2) 100%);
-    border-bottom: 3px solid transparent;
-    border-image: linear-gradient(90deg, var(--azul), var(--morado), var(--turquesa), var(--lima), var(--amarillo), var(--naranja), var(--rojo)) 1;
+    background: var(--grad-header);
+    border-bottom: 2px solid transparent;
+    border-image: var(--grad-primary) 1;
     padding: 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 4px 30px rgba(20,201,180,0.15);
+    box-shadow: 0 4px 30px rgba(232,0,45,0.12), 0 1px 0 rgba(0,197,162,0.15);
   }
 
   .header-inner {
@@ -127,14 +124,23 @@
   }
 
   .logo h1 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--verde);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
   }
 
-  .logo h1 span { color: var(--amarillo); }
+  .logo h1 span { 
+    background: linear-gradient(90deg, var(--amarillo), var(--naranja));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
   .header-nav {
     display: flex;
@@ -143,22 +149,24 @@
   }
 
   .nav-btn {
-    background: var(--fondo3);
-    border: 1px solid var(--borde);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
     color: var(--texto2);
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
   .nav-btn:hover, .nav-btn.active {
-    background: var(--verde);
-    color: #000;
-    border-color: var(--verde);
+    background: var(--rojo);
+    color: #fff;
+    border-color: var(--rojo);
+    box-shadow: 0 0 16px rgba(232,0,45,0.35);
   }
 
   /* ── PLAYER SELECT ── */
@@ -170,14 +178,14 @@
   }
 
   .screen-title {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 3rem;
-    color: var(--verde);
-    background: linear-gradient(90deg, var(--azul) 0%, var(--morado) 30%, var(--turquesa) 60%, var(--lima) 85%, var(--amarillo) 100%);
+    font-weight: 900;
+    background: var(--grad-primary);
     -webkit-background-clip: text;
-    background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 3px;
+    background-clip: text;
+    letter-spacing: 4px;
     margin-bottom: 8px;
   }
 
@@ -208,14 +216,14 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, transparent 60%, rgba(20,201,180,0.05));
+    background: linear-gradient(135deg, transparent 60%, rgba(0,197,162,0.06));
     transition: opacity 0.25s;
   }
 
   .player-card:hover {
     border-color: var(--verde);
     transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(20,201,180,0.2);
+    box-shadow: 0 8px 30px rgba(0,197,162,0.18), 0 0 0 1px rgba(0,197,162,0.15);
   }
 
   .player-card:hover::before { opacity: 1; }
@@ -239,7 +247,7 @@
 
   .player-pts {
     display: inline-block;
-    background: rgba(20,201,180,0.15);
+    background: rgba(0,197,162,0.15);
     color: var(--verde);
     padding: 2px 10px;
     border-radius: 20px;
@@ -286,8 +294,9 @@
   .tab:hover { color: var(--texto); background: var(--fondo3); }
 
   .tab.active {
-    background: var(--verde);
-    color: #000;
+    background: var(--rojo);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(232,0,45,0.3);
   }
 
   /* ── JORNADA SELECTOR ── */
@@ -311,20 +320,22 @@
   }
 
   .jornada-btn:hover, .jornada-btn.active {
-    background: rgba(20,201,180,0.15);
+    background: rgba(0,197,162,0.12);
     color: var(--verde);
     border-color: var(--verde);
   }
 
   /* ── PARTIDOS ── */
   .group-title {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.5rem;
-    letter-spacing: 2px;
+    font-weight: 900;
+    letter-spacing: 3px;
     color: var(--amarillo);
     margin: 24px 0 12px;
-    border-left: 4px solid var(--amarillo);
+    border-left: 4px solid var(--naranja);
     padding-left: 12px;
+    text-transform: uppercase;
   }
 
   .matches-grid {
@@ -343,10 +354,10 @@
   }
 
   .match-card.has-prediction {
-    border-color: rgba(20,201,180,0.3);
+    border-color: rgba(0,197,162,0.3);
   }
 
-  .match-card.correct { border-color: var(--verde); }
+  .match-card.correct { border-color: var(--verde); box-shadow: 0 0 12px rgba(0,197,162,0.15); }
   .match-card.wrong { border-color: var(--rojo); }
 
   .match-meta {
@@ -443,7 +454,7 @@
 
   .score-box:focus {
     border-color: var(--verde);
-    box-shadow: 0 0 0 3px rgba(20,201,180,0.15);
+    box-shadow: 0 0 0 3px rgba(0,197,162,0.15);
   }
 
   .score-sep {
@@ -537,9 +548,9 @@
   /* ── COMPARAR PRONÓSTICOS ── */
   .btn-compare {
     padding: 6px 10px;
-    background: rgba(255,214,0,0.08);
+    background: rgba(255,230,0,0.08);
     color: var(--amarillo);
-    border: 1px solid rgba(255,214,0,0.25);
+    border: 1px solid rgba(255,230,0,0.25);
     border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -551,7 +562,7 @@
   }
 
   .btn-compare:hover {
-    background: rgba(255,214,0,0.18);
+    background: rgba(255,230,0,0.18);
     border-color: var(--amarillo);
   }
 
@@ -559,7 +570,7 @@
     display: none;
     margin-top: 12px;
     background: var(--fondo3);
-    border: 1px solid rgba(255,214,0,0.2);
+    border: 1px solid rgba(255,230,0,0.2);
     border-radius: 10px;
     overflow: hidden;
   }
@@ -574,7 +585,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    background: rgba(255,214,0,0.05);
+    background: rgba(255,230,0,0.05);
   }
 
   .compare-rows {
@@ -594,7 +605,7 @@
   .compare-row:hover { background: rgba(255,255,255,0.03); }
 
   .compare-row.is-me {
-    background: rgba(20,201,180,0.06);
+    background: rgba(0,197,162,0.06);
   }
 
   .compare-player {
@@ -617,7 +628,7 @@
 
   .compare-me-tag {
     font-size: 0.6rem;
-    background: rgba(20,201,180,0.2);
+    background: rgba(0,197,162,0.2);
     color: var(--verde);
     padding: 1px 5px;
     border-radius: 4px;
@@ -655,15 +666,15 @@
     flex-shrink: 0;
   }
 
-  .cpts-3 { background: rgba(20,201,180,0.2); color: var(--verde); }
-  .cpts-1 { background: rgba(255,214,0,0.15); color: var(--amarillo); }
-  .cpts-0 { background: rgba(255,59,78,0.15); color: var(--rojo); }
-  .cpts-pending { background: rgba(154,168,204,0.12); color: var(--texto2); }
+  .cpts-3 { background: rgba(0,197,162,0.2); color: var(--verde); }
+  .cpts-1 { background: rgba(255,230,0,0.15); color: var(--amarillo); }
+  .cpts-0 { background: rgba(232,0,45,0.15); color: var(--rojo); }
+  .cpts-pending { background: rgba(136,136,136,0.12); color: var(--texto2); }
 
-  .badge-saved { background: rgba(20,201,180,0.15); color: var(--verde); }
-  .badge-correct { background: rgba(20,201,180,0.25); color: var(--verde); }
-  .badge-wrong { background: rgba(255,59,78,0.2); color: var(--rojo); }
-  .badge-pending { background: rgba(255,214,0,0.15); color: var(--amarillo); }
+  .badge-saved { background: rgba(0,197,162,0.15); color: var(--verde); }
+  .badge-correct { background: rgba(0,197,162,0.25); color: var(--verde); }
+  .badge-wrong { background: rgba(232,0,45,0.2); color: var(--rojo); }
+  .badge-pending { background: rgba(255,230,0,0.15); color: var(--amarillo); }
 
   /* ── TABLA POSICIONES ── */
   .leaderboard {
@@ -676,15 +687,29 @@
 
   .lb-header {
     padding: 20px 24px;
-    background: linear-gradient(135deg, var(--fondo3), var(--fondo2));
+    background: linear-gradient(135deg, #1E1E1E, #141414);
     border-bottom: 1px solid var(--borde);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lb-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--grad-primary);
   }
 
   .lb-title {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.6rem;
-    letter-spacing: 2px;
-    color: var(--verde);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .lb-sub {
@@ -889,6 +914,7 @@
     opacity: 0;
     transition: all 0.3s;
     pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0,197,162,0.35);
   }
 
   .save-toast.show {
@@ -906,7 +932,7 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--verde);
+    background: var(--grad-primary);
     border-radius: 2px;
     transition: width 0.5s ease;
   }
@@ -921,15 +947,19 @@
   }
 
   .section-header h2 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--verde);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .info-pill {
-    background: rgba(20,201,180,0.1);
-    border: 1px solid rgba(20,201,180,0.2);
+    background: rgba(0,197,162,0.1);
+    border: 1px solid rgba(0,197,162,0.2);
     color: var(--verde);
     padding: 5px 12px;
     border-radius: 20px;
@@ -950,7 +980,7 @@
     flex-wrap: wrap;
   }
 
-  .fixture-match.played { border-color: rgba(20,201,180,0.25); }
+  .fixture-match.played { border-color: rgba(0,197,162,0.25); }
 
   .fixture-teams {
     flex: 1;
@@ -976,8 +1006,8 @@
     font-weight: 700;
   }
 
-  .status-played { background: rgba(20,201,180,0.15); color: var(--verde); }
-  .status-pending { background: rgba(255,214,0,0.1); color: var(--amarillo); }
+  .status-played { background: rgba(0,197,162,0.15); color: var(--verde); }
+  .status-pending { background: rgba(255,230,0,0.1); color: var(--amarillo); }
 
   /* ── GRUPOS ── */
   .grupos-grid {
@@ -995,19 +1025,32 @@
   }
 
   .grupo-card-header {
-    background: linear-gradient(135deg, var(--fondo3), var(--fondo2));
+    background: linear-gradient(135deg, #1E1E1E, #141414);
     padding: 14px 18px;
     border-bottom: 1px solid var(--borde);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grupo-card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--grad-primary);
+    opacity: 0.5;
   }
 
   .grupo-card-title {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.3rem;
-    letter-spacing: 2px;
+    font-weight: 900;
+    letter-spacing: 3px;
     color: var(--amarillo);
+    text-transform: uppercase;
   }
 
   .grupo-table {
@@ -1074,7 +1117,7 @@
 
   .clasificados-bar {
     padding: 8px 14px;
-    background: rgba(20,201,180,0.05);
+    background: rgba(0,197,162,0.04);
     border-top: 1px solid var(--borde);
     font-size: 0.72rem;
     color: var(--texto2);
@@ -1084,7 +1127,7 @@
   }
 
   .clasificado-pill {
-    background: rgba(20,201,180,0.12);
+    background: rgba(0,197,162,0.12);
     color: var(--verde);
     padding: 2px 10px;
     border-radius: 20px;
@@ -1093,7 +1136,7 @@
   }
 
   .segundo-pill {
-    background: rgba(255,214,0,0.12);
+    background: rgba(255,230,0,0.12);
     color: var(--amarillo);
     padding: 2px 10px;
     border-radius: 20px;
@@ -1127,8 +1170,9 @@
     letter-spacing: 0.3px;
   }
   .llaves-toggle-btn.active {
-    background: var(--verde);
-    color: #000;
+    background: var(--rojo);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(232,0,45,0.3);
   }
   .llaves-toggle-btn:hover:not(.active) {
     background: var(--fondo3);
@@ -1183,7 +1227,7 @@
     width: 100%;
     transition: border-color 0.2s;
   }
-  .llaves-match:hover { border-color: rgba(20,201,180,0.4); }
+  .llaves-match:hover { border-color: rgba(0,197,162,0.4); }
   .llaves-match.lm-pending { opacity: 0.55; }
   .llaves-team {
     display: flex;
@@ -1198,7 +1242,7 @@
   }
   .llaves-team:last-of-type { border-bottom: none; }
   .llaves-team.lm-winner {
-    background: rgba(20,201,180,0.12);
+    background: rgba(0,197,162,0.12);
     color: var(--verde);
   }
   .llaves-team.lm-tbd {
@@ -1244,6 +1288,7 @@
     text-align: center;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(255,230,0,0.1);
   }
   .llaves-final-title {
     font-family: 'Bebas Neue', cursive;
@@ -1255,9 +1300,9 @@
   .llaves-champion {
     margin-top: 8px;
     padding: 6px 8px;
-    background: rgba(255,214,0,0.08);
+    background: rgba(255,230,0,0.08);
     border-radius: 6px;
-    border: 1px solid rgba(255,214,0,0.2);
+    border: 1px solid rgba(255,230,0,0.2);
     font-size: 0.65rem;
     color: var(--texto2);
   }
@@ -1291,13 +1336,15 @@
   }
 
   .bracket-section-title {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1rem;
-    letter-spacing: 2.5px;
+    font-weight: 900;
+    letter-spacing: 3px;
     color: var(--amarillo);
     padding: 10px 18px;
     background: linear-gradient(135deg, var(--fondo3), var(--fondo2));
     border-bottom: 1px solid var(--borde);
+    text-transform: uppercase;
   }
 
   .bracket-round {
@@ -1338,7 +1385,7 @@
     min-width: 140px;
   }
 
-  .bracket-match:hover { border-color: rgba(20,201,180,0.3); }
+  .bracket-match:hover { border-color: rgba(0,197,162,0.3); }
 
   .bracket-match.bracket-pending {
     opacity: 0.7;
@@ -1358,7 +1405,7 @@
   .bracket-team:last-of-type { border-bottom: none; }
 
   .bracket-team.winner {
-    background: rgba(20,201,180,0.12);
+    background: rgba(0,197,162,0.12);
     color: var(--verde);
   }
 
@@ -1454,10 +1501,10 @@
   .champion-display {
     text-align: center;
     padding: 14px 8px;
-    background: rgba(255,214,0,0.08);
+    background: rgba(255,230,0,0.07);
     border-radius: 10px;
     margin-top: 10px;
-    border: 1px solid rgba(255,214,0,0.2);
+    border: 1px solid rgba(255,230,0,0.2);
   }
 
   /* ── MODAL ── */
@@ -1484,10 +1531,14 @@
   }
 
   .modal h3 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.6rem;
-    letter-spacing: 2px;
-    color: var(--verde);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 20px;
   }
 
@@ -1535,7 +1586,7 @@
     transition: border-color 0.2s;
   }
 
-  .modal-input:focus { border-color: var(--verde); }
+  .modal-input:focus { border-color: var(--verde); box-shadow: 0 0 0 2px rgba(0,197,162,0.12); }
 
   .modal-avatar-display {
     font-size: 2rem;
@@ -1559,10 +1610,11 @@
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
   }
 
-  .btn-primary:hover { background: var(--verde-dark); }
+  .btn-primary:hover { background: var(--verde-dark); box-shadow: 0 4px 16px rgba(0,197,162,0.3); }
 
   .btn-secondary {
     padding: 10px 18px;
@@ -1588,10 +1640,14 @@
   .admin-lock .lock-icon { font-size: 4rem; margin-bottom: 16px; }
 
   .admin-lock h3 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 2rem;
-    color: var(--verde);
-    letter-spacing: 2px;
+    font-weight: 900;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 3px;
     margin-bottom: 8px;
   }
 
@@ -1617,10 +1673,10 @@
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s;
   }
 
-  .btn-save-all:hover { background: var(--verde-dark); }
+  .btn-save-all:hover { background: var(--verde-dark); box-shadow: 0 4px 14px rgba(0,197,162,0.3); }
 
   /* ── CONFIG / EXPORT / IMPORT ── */
   .config-section {
@@ -1632,11 +1688,13 @@
   }
 
   .config-section h3 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Barlow Condensed', 'Bebas Neue', cursive;
     font-size: 1.3rem;
-    letter-spacing: 1.5px;
+    font-weight: 900;
+    letter-spacing: 2px;
     color: var(--amarillo);
     margin-bottom: 16px;
+    text-transform: uppercase;
   }
 
   .config-player-row {
@@ -1664,7 +1722,7 @@
     transition: border-color 0.2s;
   }
 
-  .config-name-input:focus { border-color: var(--verde); }
+  .config-name-input:focus { border-color: var(--verde); box-shadow: 0 0 0 2px rgba(0,197,162,0.1); }
 
   .io-row {
     display: flex;
@@ -1674,9 +1732,9 @@
 
   .btn-export {
     padding: 10px 20px;
-    background: rgba(255,214,0,0.1);
+    background: rgba(255,230,0,0.09);
     color: var(--amarillo);
-    border: 1px solid rgba(255,214,0,0.3);
+    border: 1px solid rgba(255,230,0,0.3);
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1684,13 +1742,13 @@
     transition: all 0.2s;
   }
 
-  .btn-export:hover { background: rgba(255,214,0,0.2); }
+  .btn-export:hover { background: rgba(255,230,0,0.18); }
 
   .btn-import {
     padding: 10px 20px;
-    background: rgba(20,201,180,0.1);
+    background: rgba(0,197,162,0.09);
     color: var(--verde);
-    border: 1px solid rgba(20,201,180,0.3);
+    border: 1px solid rgba(0,197,162,0.3);
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1698,13 +1756,13 @@
     transition: all 0.2s;
   }
 
-  .btn-import:hover { background: rgba(20,201,180,0.2); }
+  .btn-import:hover { background: rgba(0,197,162,0.18); }
 
   .btn-danger {
     padding: 10px 20px;
-    background: rgba(255,59,78,0.1);
+    background: rgba(232,0,45,0.09);
     color: var(--rojo);
-    border: 1px solid rgba(255,59,78,0.3);
+    border: 1px solid rgba(232,0,45,0.3);
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1712,7 +1770,7 @@
     transition: all 0.2s;
   }
 
-  .btn-danger:hover { background: rgba(255,59,78,0.2); }
+  .btn-danger:hover { background: rgba(232,0,45,0.18); }
 
   /* ══════════════════════════════════════════════════════════
      RESPONSIVE MÓVIL — optimizado sin scroll horizontal
@@ -1955,11 +2013,11 @@
   .avatar-md  { width: 32px; height: 32px; font-size: 0.78rem; }
   .avatar-sm  { width: 22px; height: 22px; font-size: 0.58rem; }
 
-  /* Colores diferenciados por jugador — paleta oficial FIFA World Cup 26 */
-  .avatar-p1  { background: linear-gradient(135deg, #1E40C4, #2E5BFF); color: #fff; box-shadow: 0 2px 8px rgba(30,64,196,0.4); }
-  .avatar-p2  { background: linear-gradient(135deg, #6D28D9, #8347EB); color: #fff; box-shadow: 0 2px 8px rgba(109,40,217,0.4); }
-  .avatar-p3  { background: linear-gradient(135deg, #066A82, #0891B2); color: #fff; box-shadow: 0 2px 8px rgba(6,106,130,0.4); }
-  .avatar-p4  { background: linear-gradient(135deg, #C2410C, #EA580C); color: #fff; box-shadow: 0 2px 8px rgba(194,65,12,0.4); }
+  /* Colores diferenciados por jugador — WC26 palette */
+  .avatar-p1  { background: linear-gradient(135deg, #E8002D, #B8001F); color: #fff; box-shadow: 0 2px 8px rgba(232,0,45,0.45); }
+  .avatar-p2  { background: linear-gradient(135deg, #7B3FF2, #5A1FC0); color: #fff; box-shadow: 0 2px 8px rgba(123,63,242,0.45); }
+  .avatar-p3  { background: linear-gradient(135deg, #00C5A2, #008F76); color: #000; box-shadow: 0 2px 8px rgba(0,197,162,0.45); }
+  .avatar-p4  { background: linear-gradient(135deg, #FF5C00, #CC4800); color: #fff; box-shadow: 0 2px 8px rgba(255,92,0,0.45); }
 
   /* En selector de jugador: tamaño grande */
   .player-card .avatar-circle { width: 56px; height: 56px; font-size: 1.4rem; margin: 0 auto 12px; }
@@ -1994,9 +2052,9 @@
     padding: 3px 9px;
     border-radius: 8px;
     font-weight: 700;
-    background: rgba(255,59,78,0.15);
-    color: #FF7A8A;
-    border: 1px solid rgba(255,59,78,0.25);
+    background: rgba(232,0,45,0.14);
+    color: #ff4d6a;
+    border: 1px solid rgba(232,0,45,0.25);
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -2011,8 +2069,8 @@
   /* ── ACTUALIZAR RESULTADOS OFICIALES ── */
   .btn-update-official {
     padding: 10px 22px;
-    background: linear-gradient(135deg, #7CB300, #9FE000);
-    color: #14210A;
+    background: linear-gradient(135deg, var(--azul), var(--morado));
+    color: #fff;
     border: none;
     border-radius: 8px;
     font-size: 0.85rem;
@@ -2022,9 +2080,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 2px 12px rgba(124,179,0,0.3);
+    box-shadow: 0 2px 12px rgba(75,111,255,0.3);
   }
-  .btn-update-official:hover { background: linear-gradient(135deg, #8FCC00, #B1EB00); box-shadow: 0 4px 20px rgba(124,179,0,0.5); }
+  .btn-update-official:hover { opacity: 0.88; box-shadow: 0 4px 20px rgba(75,111,255,0.45); }
   .btn-update-official:disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-update-official .spin { display: inline-block; animation: spin360 1s linear infinite; }
   @keyframes spin360 { to { transform: rotate(360deg); } }
@@ -2046,11 +2104,11 @@
   .update-log .log-ok  { color: var(--verde); }
   .update-log .log-warn { color: var(--amarillo); }
   .update-log .log-err { color: var(--rojo); }
-  .update-log .log-info { color: var(--azul); }
+  .update-log .log-info { color: #64B5F6; }
 
   .update-summary {
-    background: rgba(20,201,180,0.07);
-    border: 1px solid rgba(20,201,180,0.2);
+    background: rgba(0,197,162,0.07);
+    border: 1px solid rgba(0,197,162,0.2);
     border-radius: 10px;
     padding: 14px 18px;
     margin-top: 12px;
@@ -2059,11 +2117,39 @@
   }
   .update-summary.visible { display: block; }
   .update-summary strong { color: var(--verde); }
+  /* ── WC26 SIGNATURE: Multi-color stripe ── */
+  .wc26-stripe {
+    height: 4px;
+    background: linear-gradient(90deg,
+      #E8002D 0%, #E8002D 20%,
+      #FFE600 20%, #FFE600 35%,
+      #00C5A2 35%, #00C5A2 55%,
+      #7B3FF2 55%, #7B3FF2 75%,
+      #FF5C00 75%, #FF5C00 100%
+    );
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  /* WC26 player card gradient border on hover */
+  .player-card:hover {
+    border-color: transparent;
+    background-clip: padding-box;
+    box-shadow:
+      0 0 0 2px var(--verde),
+      0 8px 30px rgba(0,197,162,0.18);
+  }
+
+  /* WC26 compare-me highlight row */
+  .compare-row.is-me {
+    background: rgba(0,197,162,0.06);
+  }
 </style>
 </head>
 <body>
 
 <header>
+  <div class="wc26-stripe"></div>
   <div class="header-inner">
     <div class="logo">
       <span class="logo-icon">⚽</span>
@@ -3504,7 +3590,7 @@ function renderEliminatorias() {
         </div>
         <div class="bracket-matches">${renderBracketMatch(sfA, canEdit)}</div>
       </div>
-      <div class="bracket-round" style="flex:1.5;border:1px solid rgba(255,214,0,0.3);border-radius:12px;margin:4px;background:rgba(255,214,0,0.03)">
+      <div class="bracket-round" style="flex:1.5;border:1px solid rgba(255,230,0,0.3);border-radius:12px;margin:4px;background:rgba(255,230,0,0.03)">
         <div class="bracket-round-title" style="color:var(--gold);font-size:1rem;letter-spacing:3px">🏆 GRAN FINAL 🏆</div>
         <div class="bracket-matches">
           ${renderBracketMatch(grandFinal, canEdit)}
