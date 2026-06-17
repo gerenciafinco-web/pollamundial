@@ -3503,6 +3503,13 @@ function getWinner(match) {
   return null;
 }
 
+function getLoser(match) {
+  if (!match || !match.result) return null;
+  if (match.result.winner === 'home') return match.awayTeam;
+  if (match.result.winner === 'away') return match.homeTeam;
+  return null;
+}
+
 function buildMatch(id, homeSlot, awaySlot, label, classified) {
   return {
     id, homeSlot, awaySlot, label,
@@ -3519,6 +3526,17 @@ function buildMatchFromWinners(id, label, matchA, matchB) {
     awaySlot: matchB ? `G ${matchB.label}` : '?',
     homeTeam: getWinner(matchA),
     awayTeam: getWinner(matchB),
+    result: state.knockoutResults[id] || null,
+  };
+}
+
+function buildMatchFromLosers(id, label, matchA, matchB) {
+  return {
+    id, label,
+    homeSlot: matchA ? `Per. ${matchA.label}` : '?',
+    awaySlot: matchB ? `Per. ${matchB.label}` : '?',
+    homeTeam: getLoser(matchA),
+    awayTeam: getLoser(matchB),
     result: state.knockoutResults[id] || null,
   };
 }
@@ -3553,8 +3571,10 @@ function renderEliminatorias() {
   const sfA = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
   // Semifinal B: ganador SF3 vs SF4 → Gran Final
   const sfB = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
-  const grandFinal = buildMatchFromWinners('grand_final', '🏆 FINAL', sfA, sfB);
-  const champion   = getWinner(grandFinal);
+  const grandFinal  = buildMatchFromWinners('grand_final', '🏆 FINAL', sfA, sfB);
+  const thirdPlace  = buildMatchFromLosers('third_place', '🥉 3er Puesto', sfA, sfB);
+  const champion    = getWinner(grandFinal);
+  const thirdWinner = getWinner(thirdPlace);
 
   // ── HTML ───────────────────────────────────
   let html = '';
@@ -3616,6 +3636,16 @@ function renderEliminatorias() {
               <span style="font-family:'Bebas Neue',cursive;font-size:1.8rem;color:var(--gold);letter-spacing:2px">${champion}</span>
             </div>
           </div>` : ''}
+        </div>
+        <div style="border-top:1px solid rgba(176,141,87,0.3);margin:4px 0"></div>
+        <div class="bracket-round-title" style="color:#cd7f32;font-size:0.85rem;letter-spacing:2px">🥉 TERCER PUESTO</div>
+        <div class="bracket-matches">
+          ${renderBracketMatch(thirdPlace, canEdit)}
+          ${thirdWinner ? `<div style="text-align:center;padding:8px 6px 4px;display:flex;align-items:center;justify-content:center;gap:8px">
+            ${flagImg(thirdWinner, 32, 22)}
+            <span style="font-family:'Bebas Neue',cursive;font-size:1.2rem;color:#cd7f32;letter-spacing:1.5px">${thirdWinner}</span>
+            <span style="font-size:0.65rem;color:var(--texto2)">3er lugar</span>
+          </div>` : `<div style="text-align:center;font-size:0.68rem;color:var(--texto2);padding:6px;font-style:italic">Perdedores de Semif. A y B</div>`}
         </div>
       </div>
       <div class="bracket-round" style="flex:1">
