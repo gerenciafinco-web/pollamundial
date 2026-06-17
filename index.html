@@ -73,7 +73,7 @@
     background: var(--fondo);
     color: var(--texto);
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /* ── HEADER ── */
@@ -1963,30 +1963,29 @@
     .tercero-slot-label { font-size: 0.72rem; }
     .tercero-select { font-size: 0.72rem; padding: 4px 6px; }
 
-    /* ── Vista Llaves en móvil: scroll horizontal propio ── */
+    /* ── Vista Llaves en móvil: scroll horizontal ── */
     #elim-vista-llaves {
-      width: 100%;
       overflow-x: auto;
+      overflow-y: visible;
       -webkit-overflow-scrolling: touch;
+      width: 100%;
     }
     .llaves-wrapper {
       overflow: visible;
       display: block;
-      width: 100%;
-    }
-    #llaves-container {
-      width: 100%;
-    }
-    /* El bracket de llaves mantiene su min-width para el árbol visual */
-    .llaves-bracket {
-      min-width: 780px;
       width: max-content;
-      grid-template-columns: 140px 110px 95px 100px 95px 110px 140px;
+      min-width: 100%;
     }
-    .llaves-match  { font-size: 0.6rem; }
-    .llaves-team   { padding: 4px 5px; min-height: 22px; font-size: 0.6rem; }
+    #llaves-container { width: max-content; min-width: 100%; }
+    .llaves-bracket {
+      min-width: 760px;
+      width: max-content;
+      grid-template-columns: 130px 105px 90px 96px 90px 105px 130px;
+    }
+    .llaves-match     { font-size: 0.6rem; }
+    .llaves-team      { padding: 4px 5px; min-height: 22px; font-size: 0.6rem; }
     .llaves-team-name { font-size: 0.6rem; }
-    .llaves-score  { font-size: 0.75rem; }
+    .llaves-score     { font-size: 0.75rem; }
     .llaves-col-title { font-size: 0.55rem; padding: 0 2px 8px; }
     .llaves-final-box  { padding: 6px 4px 5px; }
     .llaves-final-title { font-size: 0.75rem; letter-spacing: 1.5px; }
@@ -3848,8 +3847,8 @@ let _vistaEliminatorias = 'lista';
 
 function switchVistaEliminatorias(vista) {
   _vistaEliminatorias = vista;
-  document.getElementById('elim-vista-lista').style.display  = vista === 'lista'  ? '' : 'none';
-  document.getElementById('elim-vista-llaves').style.display = vista === 'llaves' ? '' : 'none';
+  document.getElementById('elim-vista-lista').style.display  = vista === 'lista'  ? 'block' : 'none';
+  document.getElementById('elim-vista-llaves').style.display = vista === 'llaves' ? 'block' : 'none';
   document.getElementById('btn-vista-lista').classList.toggle('active',  vista === 'lista');
   document.getElementById('btn-vista-llaves').classList.toggle('active', vista === 'llaves');
   if (vista === 'llaves') renderLlaves();
