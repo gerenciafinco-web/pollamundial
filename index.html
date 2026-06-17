@@ -105,20 +105,24 @@
   }
 
   .logo-icon {
-    font-size: 2rem;
-    animation: spin 8s linear infinite;
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    animation: trophy-pulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255,214,0,0.5));
+    flex-shrink: 0;
   }
 
-  @keyframes spin {
-    0%,100% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
+  @keyframes trophy-pulse {
+    0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,214,0,0.45)); }
+    50%      { transform: scale(1.08); filter: drop-shadow(0 0 12px rgba(255,214,0,0.75)); }
   }
 
   .logo h1 {
     font-family: 'Bebas Neue', cursive;
     font-size: 1.8rem;
     letter-spacing: 2px;
-    color: var(--verde);
+    color: #ffffff;
     line-height: 1;
   }
 
@@ -1719,7 +1723,7 @@
     /* ── Header ── */
     .header-inner { padding: 10px 14px; gap: 8px; }
     .logo h1 { font-size: 1.4rem; letter-spacing: 1px; }
-    .logo-icon { font-size: 1.6rem; }
+    .logo-icon { width: 36px; height: 36px; }
     .header-nav { gap: 4px; }
     .nav-btn { padding: 6px 10px; font-size: 0.75rem; }
 
@@ -1959,7 +1963,7 @@
   /* ── Extra pequeño: ≤ 400px ── */
   @media (max-width: 400px) {
     .logo h1 { font-size: 1.15rem; }
-    .logo-icon { font-size: 1.35rem; }
+    .logo-icon { width: 30px; height: 30px; }
     .tab { font-size: 0.67rem; padding: 7px 8px; }
     .player-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     .player-card { padding: 16px 10px; }
@@ -2107,7 +2111,7 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <span class="logo-icon">⚽</span>
+      <img class="logo-icon" src="https://upload.wikimedia.org/wikipedia/en/thumb/6/67/2022_FIFA_World_Cup.svg/220px-2022_FIFA_World_Cup.svg.png" alt="Copa Mundial" onerror="this.onerror=null;this.src='https://em-content.zobj.net/source/apple/391/trophy_1f3c6.png'">
       <h1>POLLA <span>MUNDIAL</span> 2026</h1>
     </div>
     <div class="header-nav" id="header-nav" style="display:none">
