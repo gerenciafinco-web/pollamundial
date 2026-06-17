@@ -51,16 +51,27 @@
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
 
   :root {
-    --verde: #00C853;
-    --verde-dark: #009624;
-    --rojo: #E53935;
+    /* ── Identidad visual oficial FIFA World Cup 26™ ── */
+    --azul: #4D8AFF;
+    --azul-dark: #2F66E0;
+    --morado: #A78BFA;
+    --morado-deep: #7C3AED;
+    --turquesa: #14C9B4;
+    --naranja: #FF6A2B;
+    --naranja-dark: #E6501A;
+    --lima: #9FE000;
+    --lima-dark: #7CB300;
+
+    --verde: #14C9B4;
+    --verde-dark: #0CA391;
+    --rojo: #FF3B4E;
     --amarillo: #FFD600;
-    --fondo: #0A0F1E;
-    --fondo2: #111827;
-    --fondo3: #1a2235;
-    --borde: rgba(255,255,255,0.08);
-    --texto: #E8EAED;
-    --texto2: #8A9BB0;
+    --fondo: #161B3D;
+    --fondo2: #1F2550;
+    --fondo3: #2A3169;
+    --borde: rgba(255,255,255,0.10);
+    --texto: #EDEFF7;
+    --texto2: #9AA8CC;
     --gold: #FFD600;
     --silver: #C0C0C0;
     --bronze: #CD7F32;
@@ -78,13 +89,14 @@
 
   /* ── HEADER ── */
   header {
-    background: linear-gradient(135deg, #0A0F1E 0%, #1a2235 50%, #0d1926 100%);
-    border-bottom: 2px solid var(--verde);
+    background: linear-gradient(135deg, var(--fondo) 0%, #232B66 50%, var(--fondo2) 100%);
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, var(--azul), var(--morado), var(--turquesa), var(--lima), var(--amarillo), var(--naranja), var(--rojo)) 1;
     padding: 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 4px 30px rgba(0,200,83,0.15);
+    box-shadow: 0 4px 30px rgba(20,201,180,0.15);
   }
 
   .header-inner {
@@ -161,6 +173,10 @@
     font-family: 'Bebas Neue', cursive;
     font-size: 3rem;
     color: var(--verde);
+    background: linear-gradient(90deg, var(--azul) 0%, var(--morado) 30%, var(--turquesa) 60%, var(--lima) 85%, var(--amarillo) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 3px;
     margin-bottom: 8px;
   }
@@ -192,14 +208,14 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, transparent 60%, rgba(0,200,83,0.05));
+    background: linear-gradient(135deg, transparent 60%, rgba(20,201,180,0.05));
     transition: opacity 0.25s;
   }
 
   .player-card:hover {
     border-color: var(--verde);
     transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0,200,83,0.2);
+    box-shadow: 0 8px 30px rgba(20,201,180,0.2);
   }
 
   .player-card:hover::before { opacity: 1; }
@@ -223,7 +239,7 @@
 
   .player-pts {
     display: inline-block;
-    background: rgba(0,200,83,0.15);
+    background: rgba(20,201,180,0.15);
     color: var(--verde);
     padding: 2px 10px;
     border-radius: 20px;
@@ -295,7 +311,7 @@
   }
 
   .jornada-btn:hover, .jornada-btn.active {
-    background: rgba(0,200,83,0.15);
+    background: rgba(20,201,180,0.15);
     color: var(--verde);
     border-color: var(--verde);
   }
@@ -327,7 +343,7 @@
   }
 
   .match-card.has-prediction {
-    border-color: rgba(0,200,83,0.3);
+    border-color: rgba(20,201,180,0.3);
   }
 
   .match-card.correct { border-color: var(--verde); }
@@ -427,7 +443,7 @@
 
   .score-box:focus {
     border-color: var(--verde);
-    box-shadow: 0 0 0 3px rgba(0,200,83,0.15);
+    box-shadow: 0 0 0 3px rgba(20,201,180,0.15);
   }
 
   .score-sep {
@@ -578,7 +594,7 @@
   .compare-row:hover { background: rgba(255,255,255,0.03); }
 
   .compare-row.is-me {
-    background: rgba(0,200,83,0.06);
+    background: rgba(20,201,180,0.06);
   }
 
   .compare-player {
@@ -601,7 +617,7 @@
 
   .compare-me-tag {
     font-size: 0.6rem;
-    background: rgba(0,200,83,0.2);
+    background: rgba(20,201,180,0.2);
     color: var(--verde);
     padding: 1px 5px;
     border-radius: 4px;
@@ -639,14 +655,14 @@
     flex-shrink: 0;
   }
 
-  .cpts-3 { background: rgba(0,200,83,0.2); color: var(--verde); }
+  .cpts-3 { background: rgba(20,201,180,0.2); color: var(--verde); }
   .cpts-1 { background: rgba(255,214,0,0.15); color: var(--amarillo); }
-  .cpts-0 { background: rgba(229,57,53,0.15); color: var(--rojo); }
-  .cpts-pending { background: rgba(138,155,176,0.12); color: var(--texto2); }
+  .cpts-0 { background: rgba(255,59,78,0.15); color: var(--rojo); }
+  .cpts-pending { background: rgba(154,168,204,0.12); color: var(--texto2); }
 
-  .badge-saved { background: rgba(0,200,83,0.15); color: var(--verde); }
-  .badge-correct { background: rgba(0,200,83,0.25); color: var(--verde); }
-  .badge-wrong { background: rgba(229,57,53,0.2); color: var(--rojo); }
+  .badge-saved { background: rgba(20,201,180,0.15); color: var(--verde); }
+  .badge-correct { background: rgba(20,201,180,0.25); color: var(--verde); }
+  .badge-wrong { background: rgba(255,59,78,0.2); color: var(--rojo); }
   .badge-pending { background: rgba(255,214,0,0.15); color: var(--amarillo); }
 
   /* ── TABLA POSICIONES ── */
@@ -912,8 +928,8 @@
   }
 
   .info-pill {
-    background: rgba(0,200,83,0.1);
-    border: 1px solid rgba(0,200,83,0.2);
+    background: rgba(20,201,180,0.1);
+    border: 1px solid rgba(20,201,180,0.2);
     color: var(--verde);
     padding: 5px 12px;
     border-radius: 20px;
@@ -934,7 +950,7 @@
     flex-wrap: wrap;
   }
 
-  .fixture-match.played { border-color: rgba(0,200,83,0.25); }
+  .fixture-match.played { border-color: rgba(20,201,180,0.25); }
 
   .fixture-teams {
     flex: 1;
@@ -960,7 +976,7 @@
     font-weight: 700;
   }
 
-  .status-played { background: rgba(0,200,83,0.15); color: var(--verde); }
+  .status-played { background: rgba(20,201,180,0.15); color: var(--verde); }
   .status-pending { background: rgba(255,214,0,0.1); color: var(--amarillo); }
 
   /* ── GRUPOS ── */
@@ -1058,7 +1074,7 @@
 
   .clasificados-bar {
     padding: 8px 14px;
-    background: rgba(0,200,83,0.05);
+    background: rgba(20,201,180,0.05);
     border-top: 1px solid var(--borde);
     font-size: 0.72rem;
     color: var(--texto2);
@@ -1068,7 +1084,7 @@
   }
 
   .clasificado-pill {
-    background: rgba(0,200,83,0.12);
+    background: rgba(20,201,180,0.12);
     color: var(--verde);
     padding: 2px 10px;
     border-radius: 20px;
@@ -1167,7 +1183,7 @@
     width: 100%;
     transition: border-color 0.2s;
   }
-  .llaves-match:hover { border-color: rgba(0,200,83,0.4); }
+  .llaves-match:hover { border-color: rgba(20,201,180,0.4); }
   .llaves-match.lm-pending { opacity: 0.55; }
   .llaves-team {
     display: flex;
@@ -1182,7 +1198,7 @@
   }
   .llaves-team:last-of-type { border-bottom: none; }
   .llaves-team.lm-winner {
-    background: rgba(0,200,83,0.12);
+    background: rgba(20,201,180,0.12);
     color: var(--verde);
   }
   .llaves-team.lm-tbd {
@@ -1322,7 +1338,7 @@
     min-width: 140px;
   }
 
-  .bracket-match:hover { border-color: rgba(0,200,83,0.3); }
+  .bracket-match:hover { border-color: rgba(20,201,180,0.3); }
 
   .bracket-match.bracket-pending {
     opacity: 0.7;
@@ -1342,7 +1358,7 @@
   .bracket-team:last-of-type { border-bottom: none; }
 
   .bracket-team.winner {
-    background: rgba(0,200,83,0.12);
+    background: rgba(20,201,180,0.12);
     color: var(--verde);
   }
 
@@ -1672,9 +1688,9 @@
 
   .btn-import {
     padding: 10px 20px;
-    background: rgba(0,200,83,0.1);
+    background: rgba(20,201,180,0.1);
     color: var(--verde);
-    border: 1px solid rgba(0,200,83,0.3);
+    border: 1px solid rgba(20,201,180,0.3);
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1682,13 +1698,13 @@
     transition: all 0.2s;
   }
 
-  .btn-import:hover { background: rgba(0,200,83,0.2); }
+  .btn-import:hover { background: rgba(20,201,180,0.2); }
 
   .btn-danger {
     padding: 10px 20px;
-    background: rgba(229,57,53,0.1);
+    background: rgba(255,59,78,0.1);
     color: var(--rojo);
-    border: 1px solid rgba(229,57,53,0.3);
+    border: 1px solid rgba(255,59,78,0.3);
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1696,7 +1712,7 @@
     transition: all 0.2s;
   }
 
-  .btn-danger:hover { background: rgba(229,57,53,0.2); }
+  .btn-danger:hover { background: rgba(255,59,78,0.2); }
 
   /* ══════════════════════════════════════════════════════════
      RESPONSIVE MÓVIL — optimizado sin scroll horizontal
@@ -1939,11 +1955,11 @@
   .avatar-md  { width: 32px; height: 32px; font-size: 0.78rem; }
   .avatar-sm  { width: 22px; height: 22px; font-size: 0.58rem; }
 
-  /* Colores diferenciados por jugador */
-  .avatar-p1  { background: linear-gradient(135deg, #1565C0, #1976D2); color: #fff; box-shadow: 0 2px 8px rgba(21,101,192,0.4); }
-  .avatar-p2  { background: linear-gradient(135deg, #6A1B9A, #8E24AA); color: #fff; box-shadow: 0 2px 8px rgba(106,27,154,0.4); }
-  .avatar-p3  { background: linear-gradient(135deg, #00695C, #00897B); color: #fff; box-shadow: 0 2px 8px rgba(0,105,92,0.4); }
-  .avatar-p4  { background: linear-gradient(135deg, #BF360C, #E64A19); color: #fff; box-shadow: 0 2px 8px rgba(191,54,12,0.4); }
+  /* Colores diferenciados por jugador — paleta oficial FIFA World Cup 26 */
+  .avatar-p1  { background: linear-gradient(135deg, #1E40C4, #2E5BFF); color: #fff; box-shadow: 0 2px 8px rgba(30,64,196,0.4); }
+  .avatar-p2  { background: linear-gradient(135deg, #6D28D9, #8347EB); color: #fff; box-shadow: 0 2px 8px rgba(109,40,217,0.4); }
+  .avatar-p3  { background: linear-gradient(135deg, #066A82, #0891B2); color: #fff; box-shadow: 0 2px 8px rgba(6,106,130,0.4); }
+  .avatar-p4  { background: linear-gradient(135deg, #C2410C, #EA580C); color: #fff; box-shadow: 0 2px 8px rgba(194,65,12,0.4); }
 
   /* En selector de jugador: tamaño grande */
   .player-card .avatar-circle { width: 56px; height: 56px; font-size: 1.4rem; margin: 0 auto 12px; }
@@ -1978,9 +1994,9 @@
     padding: 3px 9px;
     border-radius: 8px;
     font-weight: 700;
-    background: rgba(229,57,53,0.15);
-    color: #ff6b6b;
-    border: 1px solid rgba(229,57,53,0.25);
+    background: rgba(255,59,78,0.15);
+    color: #FF7A8A;
+    border: 1px solid rgba(255,59,78,0.25);
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -1995,8 +2011,8 @@
   /* ── ACTUALIZAR RESULTADOS OFICIALES ── */
   .btn-update-official {
     padding: 10px 22px;
-    background: linear-gradient(135deg, #0288D1, #0056A3);
-    color: #fff;
+    background: linear-gradient(135deg, #7CB300, #9FE000);
+    color: #14210A;
     border: none;
     border-radius: 8px;
     font-size: 0.85rem;
@@ -2006,9 +2022,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 2px 12px rgba(2,136,209,0.3);
+    box-shadow: 0 2px 12px rgba(124,179,0,0.3);
   }
-  .btn-update-official:hover { background: linear-gradient(135deg, #0297e8, #0068c8); box-shadow: 0 4px 20px rgba(2,136,209,0.5); }
+  .btn-update-official:hover { background: linear-gradient(135deg, #8FCC00, #B1EB00); box-shadow: 0 4px 20px rgba(124,179,0,0.5); }
   .btn-update-official:disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-update-official .spin { display: inline-block; animation: spin360 1s linear infinite; }
   @keyframes spin360 { to { transform: rotate(360deg); } }
@@ -2030,11 +2046,11 @@
   .update-log .log-ok  { color: var(--verde); }
   .update-log .log-warn { color: var(--amarillo); }
   .update-log .log-err { color: var(--rojo); }
-  .update-log .log-info { color: #64B5F6; }
+  .update-log .log-info { color: var(--azul); }
 
   .update-summary {
-    background: rgba(0,200,83,0.07);
-    border: 1px solid rgba(0,200,83,0.2);
+    background: rgba(20,201,180,0.07);
+    border: 1px solid rgba(20,201,180,0.2);
     border-radius: 10px;
     padding: 14px 18px;
     margin-top: 12px;
