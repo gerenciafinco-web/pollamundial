@@ -1121,17 +1121,27 @@
   .llaves-wrapper {
     overflow-x: auto;
     padding-bottom: 16px;
+    display: flex;
+    justify-content: center;
   }
   .llaves-bracket {
     display: grid;
     grid-template-columns:
-      170px 130px 110px 100px 110px 130px 170px;
+      minmax(150px,1fr)
+      minmax(120px,.75fr)
+      minmax(100px,.65fr)
+      minmax(110px,.7fr)
+      minmax(100px,.65fr)
+      minmax(120px,.75fr)
+      minmax(150px,1fr);
     grid-template-rows: auto;
     gap: 0;
-    min-width: 930px;
+    min-width: 860px;
+    width: 100%;
+    max-width: 1200px;
     position: relative;
     align-items: center;
-    padding: 12px 0;
+    padding: 16px 8px;
   }
   .llaves-col {
     display: flex;
@@ -2204,9 +2214,9 @@
         <div class="bracket" id="bracket-container"></div>
       </div>
     </div>
-    <div id="elim-vista-llaves" style="display:none">
+    <div id="elim-vista-llaves" style="display:none;width:100%">
       <div class="llaves-wrapper">
-        <div id="llaves-container"></div>
+        <div id="llaves-container" style="width:100%"></div>
       </div>
     </div>
   </div>
@@ -3795,7 +3805,7 @@ function renderLlaves() {
   </div>`;
 
   container.innerHTML = `
-    <div style="background:var(--fondo2);border:1px solid var(--borde);border-radius:14px;overflow:hidden;padding:16px 8px 20px">
+    <div style="background:var(--fondo2);border:1px solid var(--borde);border-radius:14px;overflow:hidden;padding:16px 8px 20px;width:100%;box-sizing:border-box">
       <div style="font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:2px;color:var(--amarillo);padding:0 8px 14px;border-bottom:1px solid var(--borde);margin-bottom:16px">
         🏆 CUADRO OFICIAL FIFA MUNDIAL 2026
         <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--texto2);font-weight:400;letter-spacing:0;margin-left:10px">Vista de solo lectura · 32 equipos</span>
