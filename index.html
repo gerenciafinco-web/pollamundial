@@ -1963,16 +1963,35 @@
     .tercero-slot-label { font-size: 0.72rem; }
     .tercero-select { font-size: 0.72rem; padding: 4px 6px; }
 
-    /* Vista llaves: ocultar en móvil (no es viable sin scroll), mostrar aviso */
+    /* ── Vista Llaves en móvil: scroll horizontal propio ── */
     #elim-vista-llaves {
-      display: none !important;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
-    /* Ocultar botón de vista llaves */
-    [onclick*="switchVistaEliminatorias('llaves')"] {
-      display: none !important;
+    .llaves-wrapper {
+      overflow: visible;
+      display: block;
+      width: 100%;
     }
-
-    /* ── Compare panel ── */
+    #llaves-container {
+      width: 100%;
+    }
+    /* El bracket de llaves mantiene su min-width para el árbol visual */
+    .llaves-bracket {
+      min-width: 780px;
+      width: max-content;
+      grid-template-columns: 140px 110px 95px 100px 95px 110px 140px;
+    }
+    .llaves-match  { font-size: 0.6rem; }
+    .llaves-team   { padding: 4px 5px; min-height: 22px; font-size: 0.6rem; }
+    .llaves-team-name { font-size: 0.6rem; }
+    .llaves-score  { font-size: 0.75rem; }
+    .llaves-col-title { font-size: 0.55rem; padding: 0 2px 8px; }
+    .llaves-final-box  { padding: 6px 4px 5px; }
+    .llaves-final-title { font-size: 0.75rem; letter-spacing: 1.5px; }
+    .llaves-third-box  { padding: 6px 4px 5px; }
+    .llaves-third-title { font-size: 0.7rem; letter-spacing: 1px; }
     .compare-name { max-width: 80px; }
 
     /* ── Guardar Todo ── */
