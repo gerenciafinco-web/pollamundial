@@ -1823,58 +1823,62 @@
     .admin-lock-row { flex-direction: column; align-items: center; }
     .admin-lock-row .modal-input { max-width: 100% !important; }
 
-    /* ── Bracket / Eliminatorias: scroll horizontal aislado ── */
+    /* ── Bracket / Eliminatorias: todo visible, sin scroll lateral ── */
     /*
-     * body tiene overflow-x:hidden que bloquea scroll interno en iOS.
-     * Solución: envolver el bracket en un div con position:relative + display:block
-     * y dejar que el wrapper propio maneje el scroll internamente.
+     * En vez de un scroll horizontal aislado, en móvil las columnas de cada
+     * ronda (y las columnas del árbol de Llaves) se apilan verticalmente
+     * para que el contenido completo entre en el ancho de la pantalla.
      */
     #sec-eliminatorias {
-      /* Crea bloque de formato propio sin cortar el scroll del hijo */
       contain: layout;
     }
     #elim-vista-lista,
     #elim-vista-llaves {
-      /* Cada vista crea su propio scroll container */
-      overflow-x: auto;
+      overflow-x: visible;
       overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
       width: 100%;
-      padding-bottom: 14px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--verde) var(--fondo3);
+      padding-bottom: 0;
     }
-    #elim-vista-lista::-webkit-scrollbar,
-    #elim-vista-llaves::-webkit-scrollbar { height: 4px; }
-    #elim-vista-lista::-webkit-scrollbar-track,
-    #elim-vista-llaves::-webkit-scrollbar-track { background: var(--fondo3); border-radius: 2px; }
-    #elim-vista-lista::-webkit-scrollbar-thumb,
-    #elim-vista-llaves::-webkit-scrollbar-thumb { background: var(--verde); border-radius: 2px; }
 
-    /* El bracket wrapper no necesita overflow propio — lo tiene el padre */
+    /* Los wrappers ocupan todo el ancho disponible, sin forzar overflow */
     .bracket-wrapper, .llaves-wrapper {
       overflow: visible;
       padding-bottom: 0;
-      width: fit-content;
-      min-width: 100%;
+      width: 100%;
+      min-width: 0;
     }
 
-    /* Tamaños mínimos para que el flex horizontal no colapase */
-    .bracket { min-width: 660px; }
-    .llaves-bracket { min-width: 900px; }
+    /* Sin anchos mínimos forzados: el contenido se adapta al ancho real */
+    .bracket { min-width: 0; width: 100%; gap: 18px; }
 
-    /* Indicador visual de scroll */
-    #elim-vista-lista::after,
-    #elim-vista-llaves::after {
-      content: '← desliza para ver todo el bracket →';
-      display: block;
-      text-align: center;
-      font-size: 0.62rem;
-      color: var(--texto2);
-      padding-top: 6px;
-      letter-spacing: 0.5px;
-      opacity: 0.7;
+    /* Cada ronda (Dieciseisavos/Cuartos/Semis/Finales) apila sus columnas
+       una debajo de otra en vez de mostrarlas lado a lado */
+    .bracket-section > div[style*="display:flex"] {
+      flex-direction: column;
     }
+    .bracket-round {
+      flex: none !important;
+      width: 100%;
+      border-right: none;
+    }
+    .bracket-round:not(:last-child) {
+      border-bottom: 1px solid var(--borde);
+    }
+
+    /* Vista de Llaves: el árbol de 7 columnas pasa a una sola columna,
+       conservando el mismo orden (izquierda → final → derecha) */
+    .llaves-bracket {
+      grid-template-columns: 1fr;
+      min-width: 0;
+      width: 100%;
+      gap: 20px;
+    }
+    .llaves-col { width: 100%; }
+    .llaves-slot {
+      padding-top: 0 !important;
+      padding-bottom: 10px !important;
+    }
+    .llaves-col:last-child .llaves-slot:last-child { padding-bottom: 0 !important; }
 
     /* ── Compare panel ── */
     .compare-name { max-width: 80px; }
