@@ -1267,6 +1267,38 @@
     margin-top: 2px;
   }
 
+  .llaves-third-box {
+    background: var(--fondo2);
+    border: 2px solid #cd7f32;
+    border-radius: 12px;
+    padding: 8px 8px 6px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .llaves-third-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.78rem;
+    color: #cd7f32;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .llaves-third-winner {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    color: #cd7f32;
+  }
+  .llaves-third-winner strong {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: #cd7f32;
+  }
+
   /* ── ELIMINATORIAS / BRACKET ── */
   .bracket-wrapper {
     overflow-x: auto;
@@ -3842,8 +3874,10 @@ function renderLlaves() {
   const sf = SF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`sf_${i}`, `SF${i+1}`, qf[a], qf[b]));
   const sfA       = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
   const sfB       = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
-  const grandFinal= buildMatchFromWinners('grand_final','🏆 FINAL', sfA, sfB);
-  const champion  = getWinner(grandFinal);
+  const grandFinal  = buildMatchFromWinners('grand_final','🏆 FINAL', sfA, sfB);
+  const thirdPlaceL = buildMatchFromLosers('third_place', '🥉 3er Puesto', sfA, sfB);
+  const champion    = getWinner(grandFinal);
+  const thirdWinner = getWinner(thirdPlaceL);
 
   // ── Disposición: cuadro izquierdo (M1–M8) y derecho (M9–M16) ──
   // Imagen de referencia:
@@ -3876,7 +3910,7 @@ function renderLlaves() {
 
   const CH = 52; // altura aprox. de un partido en px
 
-  // ── Columna central: sfA, grandFinal, sfB ──
+  // ── Columna central: sfA, grandFinal, sfB + 3er puesto ──
   const finalColHTML = `<div class="llaves-col">
     <div class="llaves-col-title" style="color:var(--amarillo)">🏆 Final</div>
     <div class="llaves-slot" style="padding-top:${CH}px">
@@ -3891,6 +3925,13 @@ function renderLlaves() {
     </div>
     <div class="llaves-slot" style="padding-top:${CH}px">
       ${llavesMatchHTML(sfB)}
+    </div>
+    <div class="llaves-slot" style="padding-top:${Math.round(CH * 0.6)}px">
+      <div class="llaves-third-box">
+        <div class="llaves-third-title">🥉 TERCER PUESTO</div>
+        ${llavesMatchHTML(thirdPlaceL)}
+        ${thirdWinner ? `<div class="llaves-third-winner">${flagImg(thirdWinner, 20, 14)}<strong>${thirdWinner}</strong></div>` : `<div style="font-size:0.6rem;color:var(--texto2);text-align:center;padding:4px;font-style:italic">Perdedores de Semif. A y B</div>`}
+      </div>
     </div>
   </div>`;
 
