@@ -3205,29 +3205,57 @@ function renderMatches() {
   const ps = state.players[currentPlayer];
   const filtered = currentJornada === 0 ? MATCHES : MATCHES.filter(m => m.jornada === currentJornada);
 
-  // Agrupar: partidos de grupos → por grupo; eliminatorias → por fase
-  const groups = {};
-  filtered.forEach(m => {
-    const key = m.fase ? m.fase : m.grupo;
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(m);
-  });
-
   const total = MATCHES.length;
   const done = Object.keys(ps.predictions).length;
   document.getElementById('progress-text').textContent = `${done} / ${total} predicciones`;
 
-  // Orden de fases eliminatorias
-  const FASE_ORDER = ['Dieciseisavos','Octavos','Cuartos','Semifinal','Tercer Puesto','Final'];
-  const groupKeys = Object.keys(groups).sort((a, b) => {
-    const ia = FASE_ORDER.indexOf(a);
-    const ib = FASE_ORDER.indexOf(b);
-    if (ia === -1 && ib === -1) return a.localeCompare(b);
-    if (ia === -1) return -1;
-    if (ib === -1) return 1;
-    return ia - ib;
+  // Agrupar por FECHA (en lugar de por grupo/fase)
+  const byDate = {};
+  filtered.forEach(m => {
+    const key = m.fecha || 'Sin fecha';
+    if (!byDate[key]) byDate[key] = [];
+    byDate[key].push(m);
   });
 
+  // Ordenar fechas cronológicamente usando FECHA_MAP
+  const dateKeys = Object.keys(byDate).sort((a, b) => {
+    const fa = FECHA_MAP[a], fb = FECHA_MAP[b];
+    if (!fa && !fb) return 0;
+    if (!fa) return 1;
+    if (!fb) return -1;
+    if (fa.month !== fb.month) return fa.month - fb.month;
+    return fa.day - fb.day;
+  });
+
+  // Dentro de cada día ordenar partidos por hora, luego por id
+  const HORA_RE = /(\d+):(\d+)\s*(a\.m\.|p\.m\.)/i;
+  function horaToMin(hora) {
+    if (!hora) return 9999;
+    const m = hora.trim().toLowerCase().match(HORA_RE);
+    if (!m) return 9999;
+    let h = parseInt(m[1]), min = parseInt(m[2]);
+    if (m[3] === 'p.m.' && h !== 12) h += 12;
+    if (m[3] === 'a.m.' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+  dateKeys.forEach(dk => {
+    byDate[dk].sort((a, b) => {
+      const diff = horaToMin(a.hora) - horaToMin(b.hora);
+      return diff !== 0 ? diff : a.id - b.id;
+    });
+  });
+
+  // Mapeo fecha → etiqueta legible (ej: "Jue 11 Jun" → "Jueves 11 Jun 2026")
+  const DIAS_ES  = { 'Jue':'Jueves','Vie':'Viernes','Sáb':'Sábado','Dom':'Domingo','Lun':'Lunes','Mar':'Martes','Mié':'Miércoles' };
+  const MESES_ES = { 'Jun':'Jun','Jul':'Jul' };
+  function formatDateLabel(fecha) {
+    if (!fecha || fecha === 'Sin fecha') return fecha;
+    const parts = fecha.split(' ');            // ['Jue','11','Jun']
+    const dayName = DIAS_ES[parts[0]] || parts[0];
+    return `${dayName} ${parts[1]} ${parts[2]} 2026`;
+  }
+
+  // Iconos de fase para el sub-badge de cada partido
   const FASE_ICONS = {
     'Dieciseisavos': '⚔️', 'Octavos': '🏅', 'Cuartos': '🎯',
     'Semifinal': '🔥', 'Tercer Puesto': '🥉', 'Final': '🏆'
@@ -3237,11 +3265,14 @@ function renderMatches() {
   const knockoutTeams = resolveKnockoutTeamsForPredictions();
 
   let html = '';
-  groupKeys.forEach(g => {
-    const isFase = FASE_ORDER.includes(g);
-    const icon = FASE_ICONS[g] || '';
-    html += `<div class="group-title">${isFase ? icon + ' ' + g : 'Grupo ' + g}</div><div class="matches-grid">`;
-    groups[g].forEach(m => {
+  dateKeys.forEach(dk => {
+    const dateLabel = formatDateLabel(dk);
+    // Badge de fase/etapa del día (usar la de los partidos de esa fecha)
+    const fasesDelDia = [...new Set(byDate[dk].map(m => m.fase || `Grupo ${m.grupo}`))];
+    const etiquetaDia = fasesDelDia.length === 1 ? fasesDelDia[0] : fasesDelDia.join(' · ');
+    const dayIcon = FASE_ICONS[fasesDelDia[0]] || '📅';
+    html += `<div class="group-title">${dayIcon} ${dateLabel}<span style="font-size:0.75rem;font-weight:500;color:var(--texto2);margin-left:10px;letter-spacing:0">${etiquetaDia}</span></div><div class="matches-grid">`;
+    byDate[dk].forEach(m => {
       const pred = ps.predictions[String(m.id)];
       const result = state.results[m.id];
       const locked = isMatchLocked(m);
