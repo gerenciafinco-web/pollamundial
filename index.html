@@ -2267,6 +2267,11 @@
       <button class="jornada-btn" onclick="filterJornada(1, this)">Jornada 1</button>
       <button class="jornada-btn" onclick="filterJornada(2, this)">Jornada 2</button>
       <button class="jornada-btn" onclick="filterJornada(3, this)">Jornada 3</button>
+      <button class="jornada-btn" onclick="filterJornada(4, this)">Dieciseisavos</button>
+      <button class="jornada-btn" onclick="filterJornada(5, this)">Octavos</button>
+      <button class="jornada-btn" onclick="filterJornada(6, this)">Cuartos</button>
+      <button class="jornada-btn" onclick="filterJornada(7, this)">Semifinal</button>
+      <button class="jornada-btn" onclick="filterJornada(8, this)">Final</button>
     </div>
     <div id="matches-container"></div>
   </div>
@@ -2296,6 +2301,11 @@
       <button class="jornada-btn" onclick="filterFixtureJornada(1, this)">Jornada 1</button>
       <button class="jornada-btn" onclick="filterFixtureJornada(2, this)">Jornada 2</button>
       <button class="jornada-btn" onclick="filterFixtureJornada(3, this)">Jornada 3</button>
+      <button class="jornada-btn" onclick="filterFixtureJornada(4, this)">Dieciseisavos</button>
+      <button class="jornada-btn" onclick="filterFixtureJornada(5, this)">Octavos</button>
+      <button class="jornada-btn" onclick="filterFixtureJornada(6, this)">Cuartos</button>
+      <button class="jornada-btn" onclick="filterFixtureJornada(7, this)">Semifinal</button>
+      <button class="jornada-btn" onclick="filterFixtureJornada(8, this)">Final</button>
     </div>
     <div id="fixture-container"></div>
   </div>
@@ -2367,6 +2377,11 @@
         <button class="jornada-btn" onclick="filterAdminJornada(1, this)">Jornada 1</button>
         <button class="jornada-btn" onclick="filterAdminJornada(2, this)">Jornada 2</button>
         <button class="jornada-btn" onclick="filterAdminJornada(3, this)">Jornada 3</button>
+        <button class="jornada-btn" onclick="filterAdminJornada(4, this)">Dieciseisavos</button>
+        <button class="jornada-btn" onclick="filterAdminJornada(5, this)">Octavos</button>
+        <button class="jornada-btn" onclick="filterAdminJornada(6, this)">Cuartos</button>
+        <button class="jornada-btn" onclick="filterAdminJornada(7, this)">Semifinal</button>
+        <button class="jornada-btn" onclick="filterAdminJornada(8, this)">Final</button>
       </div>
       <div id="admin-container"></div>
     </div>
@@ -2596,6 +2611,55 @@ const MATCHES = [
   {id:70, grupo:'K', jornada:3, fecha:'Sáb 27 Jun', hora:'6:30 p.m.',   home:'RD Congo',                 away:'Uzbekistán'},
   {id:71, grupo:'J', jornada:3, fecha:'Sáb 27 Jun', hora:'9:00 p.m.',   home:'Argelia',                  away:'Austria'},
   {id:72, grupo:'J', jornada:3, fecha:'Sáb 27 Jun', hora:'9:00 p.m.',   home:'Jordania',                 away:'Argentina'},
+
+  // ── DIECISEISAVOS DE FINAL ────────────────────────────────
+  // 29 Jun
+  {id:73, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'3:00 p.m.',  home:'1E',   away:'3ABCDF'},
+  {id:76, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'12:00 p.m.', home:'1C',   away:'2F'},
+  // 30 Jun
+  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'1I',   away:'3CDFGH'},
+  {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'2E',   away:'2I'},
+  {id:79, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'8:00 p.m.',  home:'1A',   away:'3CEFHI'},
+  // 01 Jul
+  {id:75, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'12:00 p.m.', home:'1F',   away:'2C'},
+  {id:80, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'11:00 a.m.', home:'1L',   away:'3EHIJK'},
+  // 02 Jul
+  {id:83, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'6:00 p.m.',  home:'2K',   away:'2L'},
+  {id:84, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'2:00 p.m.',  home:'1H',   away:'2J'},
+  {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'5:00 p.m.',  home:'1J',   away:'2H'},
+  // 03 Jul
+  {id:85, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'10:00 p.m.', home:'1B',   away:'3EFGIJ'},
+  {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'1K',   away:'3DEIJL'},
+  {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'2D',   away:'2G'},
+  // 01 Jul cont.
+  {id:81, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'7:00 p.m.',  home:'1D',   away:'3BEFIJ'},
+  {id:82, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'3:00 p.m.',  home:'1G',   away:'3AEHIJ'},
+
+  // ── OCTAVOS DE FINAL ─────────────────────────────────────
+  {id:89, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Sáb 04 Jul', hora:'4:00 p.m.',  home:'W74',  away:'W77'},
+  {id:90, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Sáb 04 Jul', hora:'12:00 p.m.', home:'W73',  away:'W75'},
+  {id:91, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Dom 05 Jul', hora:'3:00 p.m.',  home:'W76',  away:'W78'},
+  {id:92, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Dom 05 Jul', hora:'7:00 p.m.',  home:'W79',  away:'W80'},
+  {id:93, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Lun 06 Jul', hora:'2:00 p.m.',  home:'W83',  away:'W84'},
+  {id:94, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Lun 06 Jul', hora:'7:00 p.m.',  home:'W81',  away:'W82'},
+  {id:95, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Mar 07 Jul', hora:'3:00 p.m.',  home:'W86',  away:'W88'},
+  {id:96, grupo:'QF', jornada:5, fase:'Octavos',        fecha:'Mar 07 Jul', hora:'7:00 p.m.',  home:'W85',  away:'W87'},
+
+  // ── CUARTOS DE FINAL ──────────────────────────────────────
+  {id:97, grupo:'SF', jornada:6, fase:'Cuartos',        fecha:'Sáb 09 Jul', hora:'3:00 p.m.',  home:'W89',  away:'W90'},
+  {id:98, grupo:'SF', jornada:6, fase:'Cuartos',        fecha:'Sáb 10 Jul', hora:'2:00 p.m.',  home:'W93',  away:'W94'},
+  {id:99, grupo:'SF', jornada:6, fase:'Cuartos',        fecha:'Dom 11 Jul', hora:'4:00 p.m.',  home:'W91',  away:'W92'},
+  {id:100,grupo:'SF', jornada:6, fase:'Cuartos',        fecha:'Dom 11 Jul', hora:'8:00 p.m.',  home:'W95',  away:'W96'},
+
+  // ── SEMIFINALES ───────────────────────────────────────────
+  {id:101,grupo:'FIN', jornada:7, fase:'Semifinal',     fecha:'Mar 14 Jul', hora:'2:00 p.m.',  home:'W97',  away:'W98'},
+  {id:102,grupo:'FIN', jornada:7, fase:'Semifinal',     fecha:'Mié 15 Jul', hora:'2:00 p.m.',  home:'W99',  away:'W100'},
+
+  // ── TERCER PUESTO ─────────────────────────────────────────
+  {id:103,grupo:'FIN', jornada:8, fase:'Tercer Puesto', fecha:'Sáb 18 Jul', hora:'4:00 p.m.',  home:'RU101', away:'RU102'},
+
+  // ── GRAN FINAL ────────────────────────────────────────────
+  {id:104,grupo:'FIN', jornada:8, fase:'Final',         fecha:'Dom 19 Jul', hora:'2:00 p.m.',  home:'W101', away:'W102'},
 ];
 
 // ═══════════════════════════════════════════
@@ -2925,6 +2989,29 @@ const FECHA_MAP = {
   'Jue 25 Jun': { month: 6, day: 25 },
   'Vie 26 Jun': { month: 6, day: 26 },
   'Sáb 27 Jun': { month: 6, day: 27 },
+  // ── Eliminatorias ────────────────────────
+  'Dom 28 Jun': { month: 6, day: 28 },
+  'Lun 29 Jun': { month: 6, day: 29 },
+  'Mar 30 Jun': { month: 6, day: 30 },
+  'Mié 01 Jul': { month: 7, day:  1 },
+  'Jue 02 Jul': { month: 7, day:  2 },
+  'Vie 03 Jul': { month: 7, day:  3 },
+  'Sáb 04 Jul': { month: 7, day:  4 },
+  'Dom 05 Jul': { month: 7, day:  5 },
+  'Lun 06 Jul': { month: 7, day:  6 },
+  'Mar 07 Jul': { month: 7, day:  7 },
+  'Mié 08 Jul': { month: 7, day:  8 },
+  'Jue 09 Jul': { month: 7, day:  9 },
+  'Vie 10 Jul': { month: 7, day: 10 },
+  'Sáb 11 Jul': { month: 7, day: 11 },
+  'Dom 12 Jul': { month: 7, day: 12 },
+  'Lun 13 Jul': { month: 7, day: 13 },
+  'Mar 14 Jul': { month: 7, day: 14 },
+  'Mié 15 Jul': { month: 7, day: 15 },
+  'Jue 16 Jul': { month: 7, day: 16 },
+  'Vie 17 Jul': { month: 7, day: 17 },
+  'Sáb 18 Jul': { month: 7, day: 18 },
+  'Dom 19 Jul': { month: 7, day: 19 },
 };
 
 function parseMatchDateTime(match) {
@@ -2963,7 +3050,7 @@ function renderPlayerSelect() {
     <div class="player-card" onclick="selectPlayer('${p.id}')">
       <div class="player-avatar">${avatarHTML(p.id, p.name, 'xl')}</div>
       <div class="player-name">${p.name}</div>
-      <div class="player-stats">${preds}/48 predicciones</div>
+      <div class="player-stats">${preds}/${MATCHES.length} predicciones</div>
       <div class="player-pts">${pts} pts</div>
     </div>`;
   }).join('');
@@ -3032,19 +3119,39 @@ function renderMatches() {
   const ps = state.players[currentPlayer];
   const filtered = currentJornada === 0 ? MATCHES : MATCHES.filter(m => m.jornada === currentJornada);
 
+  // Agrupar: partidos de grupos → por grupo; eliminatorias → por fase
   const groups = {};
   filtered.forEach(m => {
-    if (!groups[m.grupo]) groups[m.grupo] = [];
-    groups[m.grupo].push(m);
+    const key = m.fase ? m.fase : m.grupo;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(m);
   });
 
   const total = MATCHES.length;
   const done = Object.keys(ps.predictions).length;
   document.getElementById('progress-text').textContent = `${done} / ${total} predicciones`;
 
+  // Orden de fases eliminatorias
+  const FASE_ORDER = ['Dieciseisavos','Octavos','Cuartos','Semifinal','Tercer Puesto','Final'];
+  const groupKeys = Object.keys(groups).sort((a, b) => {
+    const ia = FASE_ORDER.indexOf(a);
+    const ib = FASE_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return -1;
+    if (ib === -1) return 1;
+    return ia - ib;
+  });
+
+  const FASE_ICONS = {
+    'Dieciseisavos': '⚔️', 'Octavos': '🏅', 'Cuartos': '🎯',
+    'Semifinal': '🔥', 'Tercer Puesto': '🥉', 'Final': '🏆'
+  };
+
   let html = '';
-  Object.keys(groups).sort().forEach(g => {
-    html += `<div class="group-title">Grupo ${g}</div><div class="matches-grid">`;
+  groupKeys.forEach(g => {
+    const isFase = FASE_ORDER.includes(g);
+    const icon = FASE_ICONS[g] || '';
+    html += `<div class="group-title">${isFase ? icon + ' ' + g : 'Grupo ' + g}</div><div class="matches-grid">`;
     groups[g].forEach(m => {
       const pred = ps.predictions[String(m.id)];
       const result = state.results[m.id];
@@ -3075,17 +3182,20 @@ function renderMatches() {
       const aFlag = flagImg(m.away, 48, 32);
       const predH = pred !== undefined ? pred.home : '';
       const predA = pred !== undefined ? pred.away : '';
-
       const disabledAttr = locked ? 'disabled' : '';
       const lockedClass = locked ? ' match-locked' : '';
+      const metaLabel = m.fase
+        ? `${m.fase}${m.fecha ? ' · ' + m.fecha : ''}${m.hora ? ' · ' + m.hora : ''}`
+        : `${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}`;
+      const grupoLabel = m.fase ? m.fase.toUpperCase() : `GRUPO ${m.grupo}`;
 
       html += `
       <div class="${cardClass}${lockedClass}" id="card-${m.id}">
         <div class="match-meta">
           <div class="match-meta-left">
             <span class="match-num">Partido ${m.id}</span>
-            <span class="match-grupo">GRUPO ${m.grupo}</span>
-            <span class="match-date">${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}</span>
+            <span class="match-grupo">${grupoLabel}</span>
+            <span class="match-date">${metaLabel}</span>
           </div>
           ${badge}
         </div>
@@ -3328,7 +3438,7 @@ function renderLeaderboard() {
           <div class="lb-stat"><strong>${p.details.pending}</strong>pend.</div>
         </div>
         <div class="progress-bar" style="margin-top:6px; max-width:200px">
-          <div class="progress-fill" style="width:${Math.round((Object.keys(p.predictions).length/48)*100)}%"></div>
+          <div class="progress-fill" style="width:${Math.round((Object.keys(p.predictions).length/MATCHES.length)*100)}%"></div>
         </div>
       </div>
       <div style="text-align:right">
@@ -3358,24 +3468,36 @@ function renderFixture() {
   const filtered = fixtureJornada === 0 ? MATCHES : MATCHES.filter(m => m.jornada === fixtureJornada);
   const groups = {};
   filtered.forEach(m => {
-    if (!groups[m.grupo]) groups[m.grupo] = [];
-    groups[m.grupo].push(m);
+    const key = m.fase ? m.fase : m.grupo;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(m);
+  });
+
+  const FASE_ORDER = ['Dieciseisavos','Octavos','Cuartos','Semifinal','Tercer Puesto','Final'];
+  const FASE_ICONS = { 'Dieciseisavos':'⚔️','Octavos':'🏅','Cuartos':'🎯','Semifinal':'🔥','Tercer Puesto':'🥉','Final':'🏆' };
+  const groupKeys = Object.keys(groups).sort((a, b) => {
+    const ia = FASE_ORDER.indexOf(a), ib = FASE_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return -1; if (ib === -1) return 1;
+    return ia - ib;
   });
 
   let html = '';
-  Object.keys(groups).sort().forEach(g => {
-    html += `<div class="group-title">Grupo ${g}</div>`;
+  groupKeys.forEach(g => {
+    const isFase = FASE_ORDER.includes(g);
+    html += `<div class="group-title">${isFase ? (FASE_ICONS[g]||'') + ' ' + g : 'Grupo ' + g}</div>`;
     groups[g].forEach(m => {
       const result = state.results[m.id];
       const hFlag = flagImg(m.home, 24, 16);
       const aFlag = flagImg(m.away, 24, 16);
-      const played = result !== undefined;
+      const isPlayed = result !== undefined;
+      const phaseLabel = m.fase ? m.fase : `J${m.jornada}`;
       html += `
-      <div class="fixture-match ${played ? 'played' : ''}">
+      <div class="fixture-match ${isPlayed ? 'played' : ''}">
         <div style="flex-shrink:0;min-width:90px">
-          <span class="match-num" style="display:block;margin-bottom:2px">P.${m.id} · J${m.jornada}</span>
+          <span class="match-num" style="display:block;margin-bottom:2px">P.${m.id} · ${phaseLabel}</span>
           ${m.fecha ? `<span style="font-size:0.65rem;color:var(--verde);font-weight:600">${m.fecha}</span>` : ''}
-          ${m.hora ? `<span style="font-size:0.65rem;color:var(--texto2);display:block">${m.hora}</span>` : ''}
+          ${m.hora  ? `<span style="font-size:0.65rem;color:var(--texto2);display:block">${m.hora}</span>` : ''}
         </div>
         <div class="fixture-teams">
           ${hFlag}
@@ -3384,7 +3506,7 @@ function renderFixture() {
           ${aFlag}
           <span style="font-weight:600;font-size:0.85rem">${m.away}</span>
         </div>
-        ${played
+        ${isPlayed
           ? `<div class="fixture-result">${result.home} - ${result.away}</div>
              <span class="fixture-status status-played">✓ Jugado</span>`
           : `<span class="fixture-status status-pending">Pendiente</span>`
@@ -3401,8 +3523,10 @@ function renderFixture() {
 // ═══════════════════════════════════════════
 function calcGroupStandings() {
   const groups = {};
-  // Initialize teams
-  MATCHES.forEach(m => {
+  // Solo partidos de fase de grupos (jornada 1-3, sin fase eliminatoria)
+  const groupMatches = MATCHES.filter(m => !m.fase);
+
+  groupMatches.forEach(m => {
     if (!groups[m.grupo]) groups[m.grupo] = {};
     [m.home, m.away].forEach(team => {
       if (!groups[m.grupo][team]) {
@@ -3411,8 +3535,7 @@ function calcGroupStandings() {
     });
   });
 
-  // Apply results
-  MATCHES.forEach(m => {
+  groupMatches.forEach(m => {
     const r = state.results[m.id];
     if (r === undefined) return;
     const hData = groups[m.grupo][m.home];
@@ -3427,7 +3550,6 @@ function calcGroupStandings() {
     else { hData.pe++; aData.pe++; hData.pts++; aData.pts++; }
   });
 
-  // Sort each group
   const sorted = {};
   Object.keys(groups).forEach(g => {
     sorted[g] = Object.values(groups[g]).sort((a, b) => {
