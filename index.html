@@ -2950,6 +2950,7 @@ function subscribeToFirestore() {
     if (!snap.exists()) return;
     state.knockoutResults = snap.data() || {};
     if (currentPlayer && currentSection === 'eliminatorias') renderEliminatorias();
+    if (currentPlayer && currentSection === 'predicciones') renderMatches();
   });
 }
 
@@ -3110,6 +3111,84 @@ function showSection(section) {
 }
 
 // ═══════════════════════════════════════════
+//  RESOLUCIÓN DE EQUIPOS EN ELIMINATORIAS
+//  Sincroniza "Mis Predicciones" con las Llaves
+// ═══════════════════════════════════════════
+function resolveKnockoutTeamsForPredictions() {
+  // Devuelve un mapa { matchId: { homeTeam, awayTeam } } para los partidos
+  // de fase eliminatoria (jornada >= 4), tomando los equipos directamente
+  // del árbol de llaves calculado en tiempo real.
+  const classified = getGroupClassified();
+
+  const r16 = R16_BRACKET.map(p => buildMatch(p.id, p.home, p.away, p.label, classified));
+  const QF_PAIRS = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
+  const qf = QF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`qf_${i}`, `QF${i+1}`, r16[a], r16[b]));
+  const SF_PAIRS = [[0,1],[2,3],[4,5],[6,7]];
+  const sf = SF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`sf_${i}`, `SF${i+1}`, qf[a], qf[b]));
+  const sfA        = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
+  const sfB        = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
+  const grandFinal = buildMatchFromWinners('grand_final', '🏆 FINAL', sfA, sfB);
+  const thirdPlace = buildMatchFromLosers('third_place', '🥉 3er Puesto', sfA, sfB);
+
+  // Mapeo entre id de partido MATCHES y nodo del árbol
+  // R16: partidos 73-88 → r16[0..15]  (orden por fecha/id en MATCHES)
+  // QF:  partidos 89-96 → qf[0..7]
+  // SF:  partidos 97-100 → [sf[0], sf[2], sf[1], sf[3]]  (ver orden FIFA)
+  // SF fase final: 101, 102 → sfA, sfB
+  // 3er puesto: 103 → thirdPlace
+  // Final: 104 → grandFinal
+
+  // Los partidos de R16 en MATCHES (id 73-88) tienen home/away con refs
+  // como '1H','2J','T_XXXX'. Los resolvemos desde el árbol ya construido.
+  const map = {};
+
+  // Dieciseisavos (R16): ids 73..88 → r16[0..15] en el mismo orden
+  const r16Ids = MATCHES.filter(m => m.fase === 'Dieciseisavos').map(m => m.id).sort((a,b)=>a-b);
+  r16Ids.forEach((id, i) => {
+    if (r16[i]) map[id] = { homeTeam: r16[i].homeTeam, awayTeam: r16[i].awayTeam };
+  });
+
+  // Octavos (QF): ids 89..96 → qf[0..7]
+  const qfIds = MATCHES.filter(m => m.fase === 'Octavos').map(m => m.id).sort((a,b)=>a-b);
+  qfIds.forEach((id, i) => {
+    if (qf[i]) map[id] = { homeTeam: qf[i].homeTeam, awayTeam: qf[i].awayTeam };
+  });
+
+  // Cuartos (SF): ids 97..100 → qf→sf cruce
+  // MATCHES cuartos: 97(W89vsW90)=QF1vsQF2=sf[0], 98(W93vsW94)=QF3vsQF4=sf[1],
+  //                  99(W91vsW92)=QF5vsQF6=sf[2], 100(W95vsW96)=QF7vsQF8=sf[3]
+  const cuartosIds = MATCHES.filter(m => m.fase === 'Cuartos').map(m => m.id).sort((a,b)=>a-b);
+  const cuartosSfMap = [sf[0], sf[1], sf[2], sf[3]];
+  cuartosIds.forEach((id, i) => {
+    // Cuartos produce ganadores que van a semi. El partido cuartos "i" tiene
+    // como participantes los ganadores de qf[i*2] y qf[i*2+1]
+    const qfA = qf[i * 2];
+    const qfB = qf[i * 2 + 1];
+    map[id] = {
+      homeTeam: getWinner(qfA),
+      awayTeam: getWinner(qfB),
+    };
+  });
+
+  // Semifinales: ids 101, 102 → sfA, sfB
+  // MATCHES: 101(W97vsW98) = ganador de cuartos 97 vs 98 → sfA
+  //          102(W99vsW100) = ganador de cuartos 99 vs 100 → sfB
+  const sfIds = MATCHES.filter(m => m.fase === 'Semifinal').map(m => m.id).sort((a,b)=>a-b);
+  if (sfIds[0]) map[sfIds[0]] = { homeTeam: getWinner(sf[0]), awayTeam: getWinner(sf[1]) };
+  if (sfIds[1]) map[sfIds[1]] = { homeTeam: getWinner(sf[2]), awayTeam: getWinner(sf[3]) };
+
+  // Tercer puesto: id 103
+  const tercerIds = MATCHES.filter(m => m.fase === 'Tercer Puesto').map(m => m.id);
+  if (tercerIds[0]) map[tercerIds[0]] = { homeTeam: getLoser(sfA), awayTeam: getLoser(sfB) };
+
+  // Final: id 104
+  const finalIds = MATCHES.filter(m => m.fase === 'Final').map(m => m.id);
+  if (finalIds[0]) map[finalIds[0]] = { homeTeam: getWinner(sfA), awayTeam: getWinner(sfB) };
+
+  return map;
+}
+
+// ═══════════════════════════════════════════
 //  RENDER MATCHES (PREDICCIONES)
 // ═══════════════════════════════════════════
 let currentJornada = 0;
@@ -3154,6 +3233,9 @@ function renderMatches() {
     'Semifinal': '🔥', 'Tercer Puesto': '🥉', 'Final': '🏆'
   };
 
+  // Resolver equipos reales para partidos de eliminatorias
+  const knockoutTeams = resolveKnockoutTeamsForPredictions();
+
   let html = '';
   groupKeys.forEach(g => {
     const isFase = FASE_ORDER.includes(g);
@@ -3185,8 +3267,16 @@ function renderMatches() {
         }
       }
 
-      const hFlag = flagImg(m.home, 48, 32);
-      const aFlag = flagImg(m.away, 48, 32);
+      // Para partidos de eliminatorias, usar equipos resueltos desde las llaves
+      let homeName = m.home;
+      let awayName = m.away;
+      if (m.fase && knockoutTeams[m.id]) {
+        homeName = knockoutTeams[m.id].homeTeam || m.home;
+        awayName = knockoutTeams[m.id].awayTeam || m.away;
+      }
+
+      const hFlag = flagImg(homeName, 48, 32);
+      const aFlag = flagImg(awayName, 48, 32);
       const predH = pred !== undefined ? pred.home : '';
       const predA = pred !== undefined ? pred.away : '';
       const disabledAttr = locked ? 'disabled' : '';
@@ -3209,7 +3299,7 @@ function renderMatches() {
         <div class="match-teams">
           <div class="team">
             <span class="team-flag">${hFlag}</span>
-            <div class="team-name">${m.home}</div>
+            <div class="team-name">${homeName}</div>
           </div>
           <div class="score-area">
             <input type="number" class="score-box" id="pred-${m.id}-h" value="${predH}" min="0" max="20" placeholder="–" ${disabledAttr} ${locked ? '' : `oninput="autoSave(${m.id})" onchange="autoSave(${m.id})"`}>
@@ -3218,7 +3308,7 @@ function renderMatches() {
           </div>
           <div class="team">
             <span class="team-flag">${aFlag}</span>
-            <div class="team-name">${m.away}</div>
+            <div class="team-name">${awayName}</div>
           </div>
         </div>
         ${result !== undefined ? `
