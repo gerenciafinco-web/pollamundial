@@ -3206,6 +3206,16 @@ function resolveKnockoutTeamsForPredictions() {
 }
 
 // ═══════════════════════════════════════════
+//  LÍMITE DE CAMBIOS POR PRONÓSTICO
+// ═══════════════════════════════════════════
+const MAX_PREDICTION_CHANGES = 3;
+
+function getPredictionChanges(matchId) {
+  const pred = state.players[currentPlayer].predictions[String(matchId)];
+  return (pred && pred.changes) ? pred.changes : 0;
+}
+
+// ═══════════════════════════════════════════
 //  RENDER MATCHES (PREDICCIONES)
 // ═══════════════════════════════════════════
 let currentJornada = 0;
@@ -3293,6 +3303,9 @@ function renderMatches() {
       const pred = ps.predictions[String(m.id)];
       const result = state.results[m.id];
       const locked = isMatchLocked(m);
+      const changesUsed = pred && pred.changes ? pred.changes : 0;
+      const changesLeft = MAX_PREDICTION_CHANGES - changesUsed;
+      const limitReached = pred !== undefined && changesUsed >= MAX_PREDICTION_CHANGES;
       let cardClass = 'match-card';
       let badge = '';
 
@@ -3310,8 +3323,10 @@ function renderMatches() {
           if (pts === 3) { cardClass += ' correct'; badge = '<span class="prediction-badge badge-correct">✓ Exacto +3pts</span>'; }
           else if (pts === 1) { badge = '<span class="prediction-badge badge-saved">↗ Tendencia +1pt</span>'; }
           else { cardClass += ' wrong'; badge = '<span class="prediction-badge badge-wrong">✗ Fallido</span>'; }
+        } else if (limitReached) {
+          badge = '<span class="locked-badge">🔒 Máximo de cambios alcanzado</span>';
         } else {
-          badge = '<span class="prediction-badge badge-saved">✓ Guardado</span>';
+          badge = `<span class="prediction-badge badge-saved">✓ Guardado · ${changesLeft} cambio${changesLeft === 1 ? '' : 's'} restante${changesLeft === 1 ? '' : 's'}</span>`;
         }
       }
 
@@ -3327,8 +3342,8 @@ function renderMatches() {
       const aFlag = flagImg(awayName, 48, 32);
       const predH = pred !== undefined ? pred.home : '';
       const predA = pred !== undefined ? pred.away : '';
-      const disabledAttr = locked ? 'disabled' : '';
-      const lockedClass = locked ? ' match-locked' : '';
+      const disabledAttr = (locked || limitReached) ? 'disabled' : '';
+      const lockedClass = (locked || limitReached) ? ' match-locked' : '';
       const metaLabel = m.fase
         ? `${m.fase}${m.fecha ? ' · ' + m.fecha : ''}${m.hora ? ' · ' + m.hora : ''}`
         : `${m.fecha ? m.fecha + ' · ' : ''}J${m.jornada}${m.hora ? ' · ' + m.hora : ''}`;
@@ -3364,7 +3379,7 @@ function renderMatches() {
           Resultado real: <span style="color:var(--verde); font-weight:700">${result.home} - ${result.away}</span>
         </div>` : ''}
         <div class="match-actions">
-          ${!locked && pred !== undefined ? `<button class="btn-clear" onclick="clearPrediction(${m.id})" title="Borrar predicción">✕ Limpiar</button>` : ''}
+          ${!locked && !limitReached && pred !== undefined ? `<button class="btn-clear" onclick="clearPrediction(${m.id})" title="Borrar predicción">✕ Limpiar</button>` : ''}
           <button class="btn-compare" onclick="toggleCompare(${m.id})" id="cmp-btn-${m.id}" title="Ver pronósticos de otros jugadores">👥 Comparar</button>
         </div>
         <div class="compare-panel" id="cmp-panel-${m.id}">
@@ -3412,8 +3427,28 @@ function savePrediction(matchId, silent = false) {
     return;
   }
 
-  state.players[currentPlayer].predictions[String(matchId)] = { home: hNum, away: aNum };
-  console.log(`[SAVE] Predicción guardada — jugador: ${currentPlayer}, partido: ${matchId}, marcador: ${hNum}-${aNum}`);
+  const existing = state.players[currentPlayer].predictions[String(matchId)];
+  const isSameValue = existing && existing.home === hNum && existing.away === aNum;
+  const prevChanges = existing && existing.changes ? existing.changes : 0;
+
+  // Si el valor no cambió respecto al ya guardado, no consume intento
+  if (isSameValue) return;
+
+  // Si ya no es la primera vez que se guarda (existe predicción previa) y
+  // se alcanzó el máximo de cambios permitidos, bloquear el nuevo guardado
+  if (existing && prevChanges >= MAX_PREDICTION_CHANGES) {
+    // Revertir el input al valor guardado para no dejar al usuario con un
+    // valor en pantalla que en realidad no se guardó
+    h.value = existing.home;
+    a.value = existing.away;
+    showToast(`🔒 Alcanzaste el máximo de ${MAX_PREDICTION_CHANGES} cambios para este pronóstico`);
+    renderMatches();
+    return;
+  }
+
+  const newChanges = existing ? prevChanges + 1 : 0;
+  state.players[currentPlayer].predictions[String(matchId)] = { home: hNum, away: aNum, changes: newChanges };
+  console.log(`[SAVE] Predicción guardada — jugador: ${currentPlayer}, partido: ${matchId}, marcador: ${hNum}-${aNum}, cambios: ${newChanges}`);
   saveState();
   if (!silent) showToast('✓ Predicción guardada');
   renderMatches();
@@ -3421,6 +3456,7 @@ function savePrediction(matchId, silent = false) {
 
 function saveAllPredictions() {
   let saved = 0;
+  let blocked = 0;
   MATCHES.forEach(m => {
     if (isMatchLocked(m)) return; // skip locked matches
     const h = document.getElementById(`pred-${m.id}-h`);
@@ -3432,11 +3468,23 @@ function saveAllPredictions() {
     const hNum = parseInt(hVal);
     const aNum = parseInt(aVal);
     if (isNaN(hNum) || isNaN(aNum) || hNum < 0 || aNum < 0) return;
-    state.players[currentPlayer].predictions[String(m.id)] = { home: hNum, away: aNum };
+
+    const existing = state.players[currentPlayer].predictions[String(m.id)];
+    const isSameValue = existing && existing.home === hNum && existing.away === aNum;
+    if (isSameValue) return;
+    const prevChanges = existing && existing.changes ? existing.changes : 0;
+    if (existing && prevChanges >= MAX_PREDICTION_CHANGES) {
+      h.value = existing.home;
+      a.value = existing.away;
+      blocked++;
+      return;
+    }
+    const newChanges = existing ? prevChanges + 1 : 0;
+    state.players[currentPlayer].predictions[String(m.id)] = { home: hNum, away: aNum, changes: newChanges };
     saved++;
   });
   saveState();
-  showToast(`✓ ${saved} predicciones guardadas`);
+  showToast(blocked > 0 ? `✓ ${saved} guardadas — ${blocked} alcanzaron el máximo de cambios` : `✓ ${saved} predicciones guardadas`);
   renderMatches();
 }
 
@@ -3444,6 +3492,12 @@ function clearPrediction(matchId) {
   const match = MATCHES.find(m => m.id === matchId);
   if (match && isMatchLocked(match)) {
     showToast('🔒 No puedes borrar — el partido ya comenzó');
+    return;
+  }
+  const existing = state.players[currentPlayer].predictions[String(matchId)];
+  const prevChanges = existing && existing.changes ? existing.changes : 0;
+  if (existing && prevChanges >= MAX_PREDICTION_CHANGES) {
+    showToast(`🔒 Alcanzaste el máximo de ${MAX_PREDICTION_CHANGES} cambios — no puedes borrar este pronóstico`);
     return;
   }
   console.log(`[CLEAR] Borrando predicción — jugador: ${currentPlayer}, partido: ${matchId}`);
