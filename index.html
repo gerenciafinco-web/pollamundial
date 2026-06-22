@@ -108,6 +108,7 @@
     width: 40px;
     height: 60px;
     flex-shrink: 0;
+    object-fit: contain;
     animation: trophy-pulse 3s ease-in-out infinite;
     filter: drop-shadow(0 0 6px rgba(245,197,24,0.6));
   }
@@ -2160,64 +2161,15 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <svg class="logo-icon" viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg" aria-label="Copa Mundial FIFA">
-        <defs>
-          <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stop-color="#fff7a0"/>
-            <stop offset="25%"  stop-color="#f5c518"/>
-            <stop offset="50%"  stop-color="#d4920a"/>
-            <stop offset="75%"  stop-color="#f5c518"/>
-            <stop offset="100%" stop-color="#b8780a"/>
-          </linearGradient>
-          <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stop-color="#d4920a"/>
-            <stop offset="50%"  stop-color="#a0660a"/>
-            <stop offset="100%" stop-color="#d4920a"/>
-          </linearGradient>
-          <linearGradient id="goldBase" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%"   stop-color="#f5c518"/>
-            <stop offset="40%"  stop-color="#c8820a"/>
-            <stop offset="100%" stop-color="#f0b800"/>
-          </linearGradient>
-          <linearGradient id="goldShine" x1="0%" y1="0%" x2="60%" y2="100%">
-            <stop offset="0%"   stop-color="#fffde0" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#d4920a" stop-opacity="0"/>
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="1.2" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <!-- Base / pedestal -->
-        <rect x="14" y="80" width="32" height="5" rx="2" fill="url(#goldBase)"/>
-        <rect x="18" y="76" width="24" height="5" rx="1.5" fill="url(#goldBase)"/>
-        <!-- Columna central -->
-        <rect x="25" y="58" width="10" height="20" rx="2" fill="url(#goldDark)"/>
-        <rect x="26.5" y="59" width="3" height="18" rx="1" fill="url(#goldShine)" opacity="0.5"/>
-        <!-- Cuerpo de la copa -->
-        <ellipse cx="30" cy="56" rx="12" ry="3.5" fill="url(#goldMain)"/>
-        <!-- Copa principal - cuerpo -->
-        <path d="M18 30 Q17 46 22 54 Q26 58 30 58 Q34 58 38 54 Q43 46 42 30 Z"
-              fill="url(#goldMain)" filter="url(#glow)"/>
-        <!-- Brillo lateral izquierdo -->
-        <path d="M21 32 Q20 44 23 52 Q24 54 25 55 Q22 50 21.5 42 Q21 36 22 32 Z"
-              fill="url(#goldShine)" opacity="0.6"/>
-        <!-- Detalle esfera humana en la copa -->
-        <ellipse cx="30" cy="40" rx="7" ry="7.5" fill="url(#goldDark)" opacity="0.35"/>
-        <ellipse cx="28.5" cy="38" rx="3" ry="3" fill="url(#goldShine)" opacity="0.3"/>
-        <!-- Asas izquierda -->
-        <path d="M18 32 Q8 30 9 40 Q10 50 19 48" stroke="url(#goldMain)" stroke-width="3.5"
-              fill="none" stroke-linecap="round" filter="url(#glow)"/>
-        <!-- Asas derecha -->
-        <path d="M42 32 Q52 30 51 40 Q50 50 41 48" stroke="url(#goldMain)" stroke-width="3.5"
-              fill="none" stroke-linecap="round" filter="url(#glow)"/>
-        <!-- Borde superior de la copa -->
-        <ellipse cx="30" cy="30" rx="12" ry="3" fill="url(#goldMain)"/>
-        <ellipse cx="30" cy="30" rx="9"  ry="1.8" fill="url(#goldShine)" opacity="0.4"/>
-        <!-- Línea decorativa -->
-        <rect x="20" y="55.5" width="20" height="1.5" rx="0.75" fill="url(#goldMain)" opacity="0.8"/>
-        <rect x="22" y="57.5" width="16" height="1"   rx="0.5"  fill="url(#goldMain)" opacity="0.7"/>
-      </svg>
+      <!-- ══════════════════════════════════════════════════════
+           LOGO / TROFEO
+           Sube tu imagen al mismo repositorio de GitHub (junto a
+           este index.html) y reemplaza "trofeo.png" por el nombre
+           exacto de tu archivo. Si la subes a una subcarpeta, usa
+           la ruta relativa, ej: "assets/trofeo.png"
+           ══════════════════════════════════════════════════════ -->
+      <img class="logo-icon" src="trofeo.png" alt="Trofeo Polla Mundial 2026" onerror="this.style.display='none'">
+      
       <h1>COPA <span>MUNDIAL</span> FIFA 2026</h1>
     </div>
     <div class="header-nav" id="header-nav" style="display:none">
