@@ -2572,8 +2572,8 @@ const MATCHES = [
   {id:75, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'3:30 p.m.',  home:'1E',  away:'3ABCDF'},
   {id:76, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'8:00 p.m.',  home:'1F',  away:'2C'},
   // Mar 30 Jun
-  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'1I',  away:'3CDFGH'},
-  {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'2E',  away:'2I'},
+  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'2E',  away:'2I'},
+  {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'1I',  away:'3CDFGH'},
   {id:79, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'8:00 p.m.',  home:'1A',  away:'3CEFHI'},
   // Mié 01 Jul
   {id:80, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'11:00 a.m.', home:'1L',  away:'3EHIJK'},
@@ -2585,8 +2585,8 @@ const MATCHES = [
   {id:85, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'10:00 p.m.', home:'1B',  away:'3EFGIJ'},
   // Vie 03 Jul
   {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'1J',  away:'2H'},
-  {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'5:00 p.m.',  home:'1K',  away:'3DEIJL'},
-  {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'2D',  away:'2G'},
+  {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'5:00 p.m.',  home:'2D',  away:'2G'},
+  {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'1K',  away:'3DEIJL'},
 
   // ── OCTAVOS DE FINAL (8 partidos) ────────────────────────
   // Sáb 04 Jul
@@ -2715,7 +2715,7 @@ const R16_BRACKET = [
   // ── BOTTOM-RIGHT: se alimenta SF4 ──────────────
   { id:'r16_12', home:'1J',    away:'2H',      label:'M13' },
   { id:'r16_13', home:'2E',    away:'2I',      label:'M14' },
-  { id:'r16_14', home:'1K',    away:'T_EFGIJ', label:'M15' },
+  { id:'r16_14', home:'1K',    away:'T_DEIJL', label:'M15' },
   { id:'r16_15', home:'1B',    away:'T_CEGJL', label:'M16' },
 ];
 
@@ -3115,9 +3115,9 @@ function resolveKnockoutTeamsForPredictions() {
     83: 5,  // 1H vs 2J
     84: 4,  // 2K vs 2L
     85: 15, // 1B vs 3(C/E/G/J/L)
-    86: 11, // 2D vs 2G
-    87: 12, // 1J vs 2H
-    88: 14, // 1K vs 3(E/F/G/I/J)
+    86: 12, // 1J vs 2H
+    87: 11, // 2D vs 2G
+    88: 14, // 1K vs 3(D/E/I/J/L)
   };
   Object.keys(R16_ID_TO_BRACKET_INDEX).forEach(idStr => {
     const id = Number(idStr);
