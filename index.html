@@ -2572,8 +2572,8 @@ const MATCHES = [
   {id:75, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'3:30 p.m.',  home:'1E',  away:'3ABCDF'},
   {id:76, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'8:00 p.m.',  home:'1F',  away:'2C'},
   // Mar 30 Jun
-  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'2E',  away:'2I'},
-  {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'1I',  away:'3CDFGH'},
+  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'1I',  away:'3CDFGH'},
+  {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'2E',  away:'2I'},
   {id:79, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'8:00 p.m.',  home:'1A',  away:'3CEFHI'},
   // Mié 01 Jul
   {id:80, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'11:00 a.m.', home:'1L',  away:'3EHIJK'},
@@ -2584,9 +2584,9 @@ const MATCHES = [
   {id:84, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'6:00 p.m.',  home:'2K',  away:'2L'},
   {id:85, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'10:00 p.m.', home:'1B',  away:'3EFGIJ'},
   // Vie 03 Jul
-  {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'2D',  away:'2G'},
-  {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'5:00 p.m.',  home:'1J',  away:'2H'},
-  {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'1K',  away:'3DEIJL'},
+  {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'1J',  away:'2H'},
+  {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'5:00 p.m.',  home:'1K',  away:'3DEIJL'},
+  {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'2D',  away:'2G'},
 
   // ── OCTAVOS DE FINAL (8 partidos) ────────────────────────
   // Sáb 04 Jul
@@ -2688,6 +2688,7 @@ const TERCEROS_SLOTS = {
   'T_BEFIJ': { label: '3°(B/E/F/I/J)', groups: ['B','E','F','I','J'] },
   'T_AEHIJ': { label: '3°(A/E/H/I/J)', groups: ['A','E','H','I','J'] },
   'T_CEIJ':  { label: '3°(C/E/I/J)',   groups: ['C','E','I','J']     },
+  'T_EHIJK': { label: '3°(E/H/I/J/K)', groups: ['E','H','I','J','K'] },
   'T_EFGIJ': { label: '3°(E/F/G/I/J)', groups: ['E','F','G','I','J'] },
   'T_DEIJL': { label: '3°(D/E/I/J/L)', groups: ['D','E','I','J','L'] },
   'T_CEGJL': { label: '3°(C/E/G/J/L)', groups: ['C','E','G','J','L'] },
@@ -2709,11 +2710,11 @@ const R16_BRACKET = [
   // ── BOTTOM-LEFT: se alimenta SF3 ───────────────
   { id:'r16_8',  home:'1C',    away:'2F',      label:'M9'  },
   { id:'r16_9',  home:'1A',    away:'T_CEIJ',  label:'M10' },
-  { id:'r16_10', home:'1L',    away:'2I',      label:'M11' },
-  { id:'r16_11', home:'1B',    away:'2G',      label:'M12' },
+  { id:'r16_10', home:'1L',    away:'T_EHIJK', label:'M11' },
+  { id:'r16_11', home:'2D',    away:'2G',      label:'M12' },
   // ── BOTTOM-RIGHT: se alimenta SF4 ──────────────
   { id:'r16_12', home:'1J',    away:'2H',      label:'M13' },
-  { id:'r16_13', home:'2D',    away:'2E',      label:'M14' },
+  { id:'r16_13', home:'2E',    away:'2I',      label:'M14' },
   { id:'r16_14', home:'1K',    away:'T_EFGIJ', label:'M15' },
   { id:'r16_15', home:'1B',    away:'T_CEGJL', label:'M16' },
 ];
@@ -3105,16 +3106,16 @@ function resolveKnockoutTeamsForPredictions() {
     74: 8,  // 1C vs 2F
     75: 0,  // 1E vs 3(A/B/C/D/F)
     76: 3,  // 1F vs 2C
-    77: 13, // 2D vs 2E  (cruce real en llaves; 2I queda en otro cruce)
+    77: 13, // 2E vs 2I
     78: 1,  // 1I vs 3(C/D/F/G/H)
     79: 9,  // 1A vs 3(C/E/I/J)
-    80: 10, // 1L vs 2I
+    80: 10, // 1L vs 3(E/H/I/J/K)
     81: 7,  // 1G vs 3(A/E/H/I/J)
     82: 6,  // 1D vs 3(B/E/F/I/J)
     83: 5,  // 1H vs 2J
     84: 4,  // 2K vs 2L
     85: 15, // 1B vs 3(C/E/G/J/L)
-    86: 11, // 1B vs 2G  (cruce real en llaves; 2D queda en otro cruce)
+    86: 11, // 2D vs 2G
     87: 12, // 1J vs 2H
     88: 14, // 1K vs 3(E/F/G/I/J)
   };
