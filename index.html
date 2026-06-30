@@ -108,7 +108,6 @@
     width: 40px;
     height: 60px;
     flex-shrink: 0;
-    object-fit: contain;
     animation: trophy-pulse 3s ease-in-out infinite;
     filter: drop-shadow(0 0 6px rgba(245,197,24,0.6));
   }
@@ -2161,15 +2160,64 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <!-- ══════════════════════════════════════════════════════
-           LOGO / TROFEO
-           Sube tu imagen al mismo repositorio de GitHub (junto a
-           este index.html) y reemplaza "trofeo.png" por el nombre
-           exacto de tu archivo. Si la subes a una subcarpeta, usa
-           la ruta relativa, ej: "assets/trofeo.png"
-           ══════════════════════════════════════════════════════ -->
-      <img class="logo-icon" src="trofeo.png" alt="Trofeo Polla Mundial 2026" onerror="this.style.display='none'">
-      
+      <svg class="logo-icon" viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg" aria-label="Copa Mundial FIFA">
+        <defs>
+          <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#fff7a0"/>
+            <stop offset="25%"  stop-color="#f5c518"/>
+            <stop offset="50%"  stop-color="#d4920a"/>
+            <stop offset="75%"  stop-color="#f5c518"/>
+            <stop offset="100%" stop-color="#b8780a"/>
+          </linearGradient>
+          <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#d4920a"/>
+            <stop offset="50%"  stop-color="#a0660a"/>
+            <stop offset="100%" stop-color="#d4920a"/>
+          </linearGradient>
+          <linearGradient id="goldBase" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#f5c518"/>
+            <stop offset="40%"  stop-color="#c8820a"/>
+            <stop offset="100%" stop-color="#f0b800"/>
+          </linearGradient>
+          <linearGradient id="goldShine" x1="0%" y1="0%" x2="60%" y2="100%">
+            <stop offset="0%"   stop-color="#fffde0" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#d4920a" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="1.2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Base / pedestal -->
+        <rect x="14" y="80" width="32" height="5" rx="2" fill="url(#goldBase)"/>
+        <rect x="18" y="76" width="24" height="5" rx="1.5" fill="url(#goldBase)"/>
+        <!-- Columna central -->
+        <rect x="25" y="58" width="10" height="20" rx="2" fill="url(#goldDark)"/>
+        <rect x="26.5" y="59" width="3" height="18" rx="1" fill="url(#goldShine)" opacity="0.5"/>
+        <!-- Cuerpo de la copa -->
+        <ellipse cx="30" cy="56" rx="12" ry="3.5" fill="url(#goldMain)"/>
+        <!-- Copa principal - cuerpo -->
+        <path d="M18 30 Q17 46 22 54 Q26 58 30 58 Q34 58 38 54 Q43 46 42 30 Z"
+              fill="url(#goldMain)" filter="url(#glow)"/>
+        <!-- Brillo lateral izquierdo -->
+        <path d="M21 32 Q20 44 23 52 Q24 54 25 55 Q22 50 21.5 42 Q21 36 22 32 Z"
+              fill="url(#goldShine)" opacity="0.6"/>
+        <!-- Detalle esfera humana en la copa -->
+        <ellipse cx="30" cy="40" rx="7" ry="7.5" fill="url(#goldDark)" opacity="0.35"/>
+        <ellipse cx="28.5" cy="38" rx="3" ry="3" fill="url(#goldShine)" opacity="0.3"/>
+        <!-- Asas izquierda -->
+        <path d="M18 32 Q8 30 9 40 Q10 50 19 48" stroke="url(#goldMain)" stroke-width="3.5"
+              fill="none" stroke-linecap="round" filter="url(#glow)"/>
+        <!-- Asas derecha -->
+        <path d="M42 32 Q52 30 51 40 Q50 50 41 48" stroke="url(#goldMain)" stroke-width="3.5"
+              fill="none" stroke-linecap="round" filter="url(#glow)"/>
+        <!-- Borde superior de la copa -->
+        <ellipse cx="30" cy="30" rx="12" ry="3" fill="url(#goldMain)"/>
+        <ellipse cx="30" cy="30" rx="9"  ry="1.8" fill="url(#goldShine)" opacity="0.4"/>
+        <!-- Línea decorativa -->
+        <rect x="20" y="55.5" width="20" height="1.5" rx="0.75" fill="url(#goldMain)" opacity="0.8"/>
+        <rect x="22" y="57.5" width="16" height="1"   rx="0.5"  fill="url(#goldMain)" opacity="0.7"/>
+      </svg>
       <h1>COPA <span>MUNDIAL</span> FIFA 2026</h1>
     </div>
     <div class="header-nav" id="header-nav" style="display:none">
@@ -2572,11 +2620,11 @@ const MATCHES = [
   {id:75, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'3:30 p.m.',  home:'1E',  away:'3ABCDF'},
   {id:76, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Lun 29 Jun', hora:'8:00 p.m.',  home:'1F',  away:'2C'},
   // Mar 30 Jun
-  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'2E',  away:'2I'},
+  {id:77, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'12:00 p.m.', home:'2D',  away:'2E'},
   {id:78, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'4:00 p.m.',  home:'1I',  away:'3CDFGH'},
   {id:79, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mar 30 Jun', hora:'8:00 p.m.',  home:'1A',  away:'3CEFHI'},
   // Mié 01 Jul
-  {id:80, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'11:00 a.m.', home:'1L',  away:'3EHIJK'},
+  {id:80, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'11:00 a.m.', home:'1L',  away:'2I'},
   {id:81, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'3:00 p.m.',  home:'1G',  away:'3AEHIJ'},
   {id:82, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Mié 01 Jul', hora:'7:00 p.m.',  home:'1D',  away:'3BEFIJ'},
   // Jue 02 Jul
@@ -2584,7 +2632,7 @@ const MATCHES = [
   {id:84, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'6:00 p.m.',  home:'2K',  away:'2L'},
   {id:85, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Jue 02 Jul', hora:'10:00 p.m.', home:'1B',  away:'3EFGIJ'},
   // Vie 03 Jul
-  {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'2D',  away:'2G'},
+  {id:86, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'1:00 p.m.',  home:'1B',  away:'2G'},
   {id:87, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'5:00 p.m.',  home:'1J',  away:'2H'},
   {id:88, grupo:'R16', jornada:4, fase:'Dieciseisavos', fecha:'Vie 03 Jul', hora:'8:30 p.m.',  home:'1K',  away:'3DEIJL'},
 
@@ -2675,10 +2723,10 @@ const MATCHES = [
 //  T_CDFGH: un tercero de C,D,F,G,H
 //  T_BEFIJ: un tercero de B,E,F,I,J
 //  T_AEHIJ: un tercero de A,E,H,I,J
-//  T_CEFHI: un tercero de C,E,F,H,I
-//  T_EHIJK: un tercero de E,H,I,J,K
+//  T_CEIJ:  un tercero de C,E,I,J
 //  T_EFGIJ: un tercero de E,F,G,I,J
 //  T_DEIJL: un tercero de D,E,I,J,L
+//  T_CEGJL: un tercero de C,E,G,J,L (slot restante)
 // ═══════════════════════════════════════════
 
 // Slots de terceros y los grupos válidos para cada uno
@@ -2687,10 +2735,10 @@ const TERCEROS_SLOTS = {
   'T_CDFGH': { label: '3°(C/D/F/G/H)', groups: ['C','D','F','G','H'] },
   'T_BEFIJ': { label: '3°(B/E/F/I/J)', groups: ['B','E','F','I','J'] },
   'T_AEHIJ': { label: '3°(A/E/H/I/J)', groups: ['A','E','H','I','J'] },
-  'T_CEFHI': { label: '3°(C/E/F/H/I)', groups: ['C','E','F','H','I'] },
-  'T_EHIJK': { label: '3°(E/H/I/J/K)', groups: ['E','H','I','J','K'] },
+  'T_CEIJ':  { label: '3°(C/E/I/J)',   groups: ['C','E','I','J']     },
   'T_EFGIJ': { label: '3°(E/F/G/I/J)', groups: ['E','F','G','I','J'] },
   'T_DEIJL': { label: '3°(D/E/I/J/L)', groups: ['D','E','I','J','L'] },
+  'T_CEGJL': { label: '3°(C/E/G/J/L)', groups: ['C','E','G','J','L'] },
 };
 
 // Cuadro oficial con 16 partidos de R16
@@ -2708,14 +2756,14 @@ const R16_BRACKET = [
   { id:'r16_7',  home:'1G',    away:'T_AEHIJ', label:'M8'  },
   // ── BOTTOM-LEFT: se alimenta SF3 ───────────────
   { id:'r16_8',  home:'1C',    away:'2F',      label:'M9'  },
-  { id:'r16_9',  home:'2E',    away:'2I',      label:'M10' },
-  { id:'r16_10', home:'1A',    away:'T_CEFHI', label:'M11' },
-  { id:'r16_11', home:'1L',    away:'T_EHIJK', label:'M12' },
+  { id:'r16_9',  home:'1A',    away:'T_CEIJ',  label:'M10' },
+  { id:'r16_10', home:'1L',    away:'2I',      label:'M11' },
+  { id:'r16_11', home:'1B',    away:'2G',      label:'M12' },
   // ── BOTTOM-RIGHT: se alimenta SF4 ──────────────
   { id:'r16_12', home:'1J',    away:'2H',      label:'M13' },
-  { id:'r16_13', home:'2D',    away:'2G',      label:'M14' },
-  { id:'r16_14', home:'1B',    away:'T_EFGIJ', label:'M15' },
-  { id:'r16_15', home:'1K',    away:'T_DEIJL', label:'M16' },
+  { id:'r16_13', home:'2D',    away:'2E',      label:'M14' },
+  { id:'r16_14', home:'1K',    away:'T_EFGIJ', label:'M15' },
+  { id:'r16_15', home:'1B',    away:'T_CEGJL', label:'M16' },
 ];
 
 // ═══════════════════════════════════════════
@@ -3105,18 +3153,18 @@ function resolveKnockoutTeamsForPredictions() {
     74: 8,  // 1C vs 2F
     75: 0,  // 1E vs 3(A/B/C/D/F)
     76: 3,  // 1F vs 2C
-    77: 9,  // 2E vs 2I
+    77: 13, // 2D vs 2E
     78: 1,  // 1I vs 3(C/D/F/G/H)
-    79: 10, // 1A vs 3(C/E/F/H/I)
-    80: 11, // 1L vs 3(E/H/I/J/K)
+    79: 9,  // 1A vs 3(C/E/I/J)
+    80: 10, // 1L vs 2I
     81: 7,  // 1G vs 3(A/E/H/I/J)
     82: 6,  // 1D vs 3(B/E/F/I/J)
     83: 5,  // 1H vs 2J
     84: 4,  // 2K vs 2L
-    85: 14, // 1B vs 3(E/F/G/I/J)
-    86: 13, // 2D vs 2G
+    85: 15, // 1B vs 3(C/E/G/J/L)
+    86: 11, // 1B vs 2G
     87: 12, // 1J vs 2H
-    88: 15, // 1K vs 3(D/E/I/J/L)
+    88: 14, // 1K vs 3(E/F/G/I/J)
   };
   Object.keys(R16_ID_TO_BRACKET_INDEX).forEach(idStr => {
     const id = Number(idStr);
@@ -3153,6 +3201,69 @@ function resolveKnockoutTeamsForPredictions() {
   // Final: id 104 → ganadores de Semifinal A y B (sfA, sfB del árbol oficial)
   const finalIds = MATCHES.filter(m => m.fase === 'Final').map(m => m.id);
   if (finalIds[0]) map[finalIds[0]] = { homeTeam: getWinner(sfA), awayTeam: getWinner(sfB) };
+
+  return map;
+}
+
+// ═══════════════════════════════════════════
+//  RESOLUCIÓN DE BRACKET PARA ADMIN
+//  (equipos + bracketKey + resultado) — usado en
+//  Admin → Ingresar resultados para Dieciseisavos..Final
+// ═══════════════════════════════════════════
+function resolveKnockoutBracketForAdmin() {
+  // Devuelve un mapa { matchId: { homeTeam, awayTeam, bracketKey, result } }
+  // donde bracketKey es la clave real usada en state.knockoutResults
+  // (r16_0, qf_0, sf_0, final_sfa, final_sfb, grand_final, third_place),
+  // exactamente el mismo árbol que usa Eliminatorias → Llaves.
+  const classified = getGroupClassified();
+
+  const r16 = R16_BRACKET.map(p => buildMatch(p.id, p.home, p.away, p.label, classified));
+  const QF_PAIRS = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
+  const qf = QF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`qf_${i}`, `QF${i+1}`, r16[a], r16[b]));
+  const SF_PAIRS = [[0,1],[2,3],[4,5],[6,7]];
+  const sf = SF_PAIRS.map(([a,b], i) => buildMatchFromWinners(`sf_${i}`, `SF${i+1}`, qf[a], qf[b]));
+  const sfA        = buildMatchFromWinners('final_sfa', 'Semif. A', sf[0], sf[1]);
+  const sfB        = buildMatchFromWinners('final_sfb', 'Semif. B', sf[2], sf[3]);
+  const grandFinal = buildMatchFromWinners('grand_final', '🏆 FINAL', sfA, sfB);
+  const thirdPlace = buildMatchFromLosers('third_place', '🥉 3er Puesto', sfA, sfB);
+
+  const map = {};
+
+  function toEntry(node) {
+    if (!node) return null;
+    return { homeTeam: node.homeTeam, awayTeam: node.awayTeam, bracketKey: node.id, result: node.result };
+  }
+
+  // R16 (73-88) → mismo mapeo verificado por contenido real
+  const R16_ID_TO_BRACKET_INDEX = {
+    73: 2, 74: 8, 75: 0, 76: 3, 77: 13, 78: 1, 79: 9, 80: 10,
+    81: 7, 82: 6, 83: 5, 84: 4, 85: 15, 86: 11, 87: 12, 88: 14,
+  };
+  Object.keys(R16_ID_TO_BRACKET_INDEX).forEach(idStr => {
+    const id = Number(idStr);
+    map[id] = toEntry(r16[R16_ID_TO_BRACKET_INDEX[idStr]]);
+  });
+
+  // Octavos (89-96) → qf[0..7] por orden cronológico
+  const qfIds = MATCHES.filter(m => m.fase === 'Octavos').map(m => m.id).sort((a,b)=>a-b);
+  qfIds.forEach((id, i) => { map[id] = toEntry(qf[i]); });
+
+  // Cuartos (97-100) → sf[0..3]
+  const cuartosIds = MATCHES.filter(m => m.fase === 'Cuartos').map(m => m.id).sort((a,b)=>a-b);
+  cuartosIds.forEach((id, i) => { map[id] = toEntry(sf[i]); });
+
+  // Semifinal (101-102) → sfA, sfB
+  const sfIds = MATCHES.filter(m => m.fase === 'Semifinal').map(m => m.id).sort((a,b)=>a-b);
+  if (sfIds[0]) map[sfIds[0]] = toEntry(sfA);
+  if (sfIds[1]) map[sfIds[1]] = toEntry(sfB);
+
+  // Tercer puesto (103) → thirdPlace
+  const tercerIds = MATCHES.filter(m => m.fase === 'Tercer Puesto').map(m => m.id);
+  if (tercerIds[0]) map[tercerIds[0]] = toEntry(thirdPlace);
+
+  // Final (104) → grandFinal
+  const finalIds = MATCHES.filter(m => m.fase === 'Final').map(m => m.id);
+  if (finalIds[0]) map[finalIds[0]] = toEntry(grandFinal);
 
   return map;
 }
@@ -4305,42 +4416,123 @@ function renderAdmin() {
   const filtered = adminJornada === 0 ? MATCHES : MATCHES.filter(m => m.jornada === adminJornada);
   const groups = {};
   filtered.forEach(m => {
-    if (!groups[m.grupo]) groups[m.grupo] = [];
-    groups[m.grupo].push(m);
+    const key = m.fase ? m.fase : m.grupo;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(m);
   });
 
-  let html = '';
-  Object.keys(groups).sort().forEach(g => {
-    html += `<div class="group-title">Grupo ${g}</div>`;
-    groups[g].forEach(m => {
-      const result = state.results[m.id];
-      const hFlag = flagImg(m.home, 20, 14);
-      const aFlag = flagImg(m.away, 20, 14);
+  // Orden de fases eliminatorias (igual que en otras secciones)
+  const FASE_ORDER = ['Dieciseisavos','Octavos','Cuartos','Semifinal','Tercer Puesto','Final'];
+  const groupKeys = Object.keys(groups).sort((a, b) => {
+    const ia = FASE_ORDER.indexOf(a);
+    const ib = FASE_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return -1;
+    if (ib === -1) return 1;
+    return ia - ib;
+  });
 
-      html += `
-      <div class="admin-card">
-        <div class="admin-match-row">
-          <span class="match-num" style="flex-shrink:0">P.${m.id} · J${m.jornada}</span>
-          <div class="admin-teams">
-            ${hFlag}
-            <span>${m.home}</span>
-            <span style="color:var(--texto2); margin:0 4px">vs</span>
-            ${aFlag}
-            <span>${m.away}</span>
+  // Resolver equipos reales + bracketKey + resultado para partidos de eliminatorias
+  const bracketMap = resolveKnockoutBracketForAdmin();
+
+  let html = '';
+  groupKeys.forEach(g => {
+    const isFase = FASE_ORDER.includes(g);
+    html += `<div class="group-title">${isFase ? g : 'Grupo ' + g}</div>`;
+    groups[g].forEach(m => {
+      if (m.fase && bracketMap[m.id]) {
+        // ── Partido de eliminatorias: usar equipos reales + selector ganador,
+        //    guardando en state.knockoutResults (misma fuente que Llaves) ──
+        const entry = bracketMap[m.id];
+        const homeName = entry.homeTeam || m.home;
+        const awayName = entry.awayTeam || m.away;
+        const pending = !entry.homeTeam || !entry.awayTeam;
+        const hFlag = entry.homeTeam ? flagImg(entry.homeTeam, 20, 14) : '';
+        const aFlag = entry.awayTeam ? flagImg(entry.awayTeam, 20, 14) : '';
+        const res = entry.result;
+        const bKey = entry.bracketKey;
+
+        html += `
+        <div class="admin-card">
+          <div class="admin-match-row">
+            <span class="match-num" style="flex-shrink:0">${m.fase} · P.${m.id}</span>
+            <div class="admin-teams">
+              ${hFlag}
+              <span>${homeName}</span>
+              <span style="color:var(--texto2); margin:0 4px">vs</span>
+              ${aFlag}
+              <span>${awayName}</span>
+            </div>
+            ${pending ? `<span style="font-size:0.7rem;color:var(--texto2);font-style:italic;padding:4px 8px">Pendiente de definir cruce</span>` : `
+            <div class="admin-score-inputs">
+              <input type="number" class="score-box" id="res-ko-${m.id}-h" value="${res ? res.home : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
+              <span class="score-sep">:</span>
+              <input type="number" class="score-box" id="res-ko-${m.id}-a" value="${res ? res.away : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
+            </div>
+            <select id="res-ko-${m.id}-w" style="background:var(--fondo3);border:1px solid var(--borde);border-radius:6px;color:var(--texto);font-size:0.75rem;padding:6px 6px;outline:none;margin:0 6px">
+              <option value="">Ganador</option>
+              <option value="home" ${res && res.winner==='home' ? 'selected' : ''}>${homeName}</option>
+              <option value="away" ${res && res.winner==='away' ? 'selected' : ''}>${awayName}</option>
+            </select>
+            <button class="btn-confirm" onclick="saveAdminKOResult(${m.id}, '${bKey}')">Confirmar</button>
+            ${res !== null && res !== undefined ? `<span class="result-confirmed">✓ ${res.home}-${res.away}</span>` : ''}
+            `}
           </div>
-          <div class="admin-score-inputs">
-            <input type="number" class="score-box" id="res-${m.id}-h" value="${result ? result.home : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
-            <span class="score-sep">:</span>
-            <input type="number" class="score-box" id="res-${m.id}-a" value="${result ? result.away : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
+        </div>`;
+      } else {
+        // ── Partido de fase de grupos: comportamiento original sin cambios ──
+        const result = state.results[m.id];
+        const hFlag = flagImg(m.home, 20, 14);
+        const aFlag = flagImg(m.away, 20, 14);
+
+        html += `
+        <div class="admin-card">
+          <div class="admin-match-row">
+            <span class="match-num" style="flex-shrink:0">P.${m.id} · J${m.jornada}</span>
+            <div class="admin-teams">
+              ${hFlag}
+              <span>${m.home}</span>
+              <span style="color:var(--texto2); margin:0 4px">vs</span>
+              ${aFlag}
+              <span>${m.away}</span>
+            </div>
+            <div class="admin-score-inputs">
+              <input type="number" class="score-box" id="res-${m.id}-h" value="${result ? result.home : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
+              <span class="score-sep">:</span>
+              <input type="number" class="score-box" id="res-${m.id}-a" value="${result ? result.away : ''}" min="0" max="20" placeholder="–" style="background:var(--fondo)">
+            </div>
+            <button class="btn-confirm" onclick="saveResult(${m.id})">Confirmar</button>
+            ${result !== undefined ? `<span class="result-confirmed">✓ ${result.home}-${result.away}</span>` : ''}
           </div>
-          <button class="btn-confirm" onclick="saveResult(${m.id})">Confirmar</button>
-          ${result !== undefined ? `<span class="result-confirmed">✓ ${result.home}-${result.away}</span>` : ''}
-        </div>
-      </div>`;
+        </div>`;
+      }
     });
   });
 
   document.getElementById('admin-container').innerHTML = html;
+}
+
+function saveAdminKOResult(matchId, bracketKey) {
+  const h = document.getElementById(`res-ko-${matchId}-h`);
+  const a = document.getElementById(`res-ko-${matchId}-a`);
+  const w = document.getElementById(`res-ko-${matchId}-w`);
+  if (!h || !a || !w) return;
+  if (h.value.trim() === '' || a.value.trim() === '') {
+    showToast('⚠️ Ingresa ambos valores');
+    return;
+  }
+  const hNum = parseInt(h.value);
+  const aNum = parseInt(a.value);
+  if (isNaN(hNum) || isNaN(aNum)) { showToast('⚠️ Valores inválidos'); return; }
+  if (!w.value) { showToast('⚠️ Selecciona el equipo ganador'); return; }
+
+  // Guardar en state.knockoutResults — misma fuente que usan Eliminatorias/Llaves,
+  // así el ganador avanza automáticamente al siguiente cruce en toda la app.
+  state.knockoutResults[bracketKey] = { home: hNum, away: aNum, winner: w.value };
+  saveState();
+  showToast('✓ Resultado guardado — el ganador avanzó al siguiente cruce');
+  renderAdmin();
+  if (currentSection === 'tabla') renderLeaderboard();
 }
 
 // ═══════════════════════════════════════════
